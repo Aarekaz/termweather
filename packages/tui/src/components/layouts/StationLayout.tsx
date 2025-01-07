@@ -3,6 +3,7 @@ import { Box } from 'ink';
 import type { WeatherData } from '@weather/core';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 import { UnifiedHeader } from './UnifiedHeader.js';
+import { QuickMetricsBar } from './QuickMetricsBar.js';
 import { HourlyForecastPanel } from '../panels/HourlyForecastPanel.js';
 import { PrecipitationAlertPanel } from '../panels/PrecipitationAlertPanel.js';
 import { PrecipitationSummaryPanel } from '../panels/PrecipitationSummaryPanel.js';
@@ -52,8 +53,8 @@ export function StationLayout({
   const hours = hoursToShow[breakpoint] || 10;
 
   return (
-    <Box flexDirection="column" gap={0} paddingX={1} paddingY={0}>
-      {/* Unified Header - NEW (replaces TopStatusBar + QuickMetricsBar) */}
+    <Box flexDirection="column" gap={1} paddingX={1} paddingY={0}>
+      {/* Unified Header - location + current conditions */}
       <UnifiedHeader
         location={data.location.name}
         temperature={data.current.temperature}
@@ -61,6 +62,10 @@ export function StationLayout({
         feelsLike={data.current.feelsLike}
         locationIndex={locationIndex}
         totalLocations={totalLocations}
+      />
+
+      {/* Quick Metrics - keep a separate, lighter row to reduce header crowding */}
+      <QuickMetricsBar
         wind={{
           speed: data.current.windSpeed,
           direction: data.current.windDirection,
@@ -68,8 +73,8 @@ export function StationLayout({
         humidity={data.current.humidity}
         pressure={data.current.pressure}
         pressureTrend={data.current.pressureTrend}
-        uvIndex={data.current.uvIndex}
-        aqi={data.airQuality?.aqi}
+        uvIndex={breakpoint === 'large' || breakpoint === 'xlarge' ? data.current.uvIndex : undefined}
+        aqi={breakpoint === 'large' || breakpoint === 'xlarge' ? data.airQuality?.aqi : undefined}
       />
 
       {/* Hourly Forecast - Enhanced with Feels Like + Wind sparklines */}

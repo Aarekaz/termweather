@@ -7,6 +7,7 @@ import { Sparkline } from '../visualizations/Sparkline.js';
 import { WindSparkline } from '../visualizations/WindSparkline.js';
 import { getFocusBorderProps } from '../../utils/focus.js';
 import { getPrecipTypeEmoji } from '../../utils/atmosphere.js';
+import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
 interface HourlyForecastPanelProps {
   /** Hourly forecast data */
@@ -26,7 +27,10 @@ export function HourlyForecastPanel({
   hours = 8,
   isFocused = false,
 }: HourlyForecastPanelProps) {
+  const { breakpoint } = useTerminalSize();
   const forecastData = hourly.slice(0, hours);
+  const showFeelsLike = breakpoint !== 'tiny' && breakpoint !== 'small';
+  const showGust = breakpoint === 'large' || breakpoint === 'xlarge';
 
   // Extract data for sparklines
   const tempData = forecastData.map((h) => h.temperature);
@@ -133,26 +137,28 @@ export function HourlyForecastPanel({
         {/* Right column: Feels Like + Wind */}
         <Box flexDirection="column" flexGrow={1}>
           {/* Feels Like sparkline with range */}
-          <Box flexDirection="column">
-            <Box gap={2}>
-              <Text dimColor>Feel</Text>
-              <Sparkline
-                data={feelsLikeData}
-                width={hours * 4}
-                color={SEMANTIC_COLORS.temperature.neutral}
-              />
+          {showFeelsLike && (
+            <Box flexDirection="column">
+              <Box gap={2}>
+                <Text dimColor>Feel</Text>
+                <Sparkline
+                  data={feelsLikeData}
+                  width={hours * 4}
+                  color={SEMANTIC_COLORS.temperature.neutral}
+                />
+              </Box>
+              <Box gap={1} marginTop={0}>
+                <Text dimColor>Range:</Text>
+                <Text color={SEMANTIC_COLORS.temperature.neutral}>
+                  {Math.round(Math.min(...feelsLikeData))}° to{' '}
+                  {Math.round(Math.max(...feelsLikeData))}°
+                </Text>
+              </Box>
             </Box>
-            <Box gap={1} marginTop={0}>
-              <Text dimColor>Range:</Text>
-              <Text color={SEMANTIC_COLORS.temperature.neutral}>
-                {Math.round(Math.min(...feelsLikeData))}° to{' '}
-                {Math.round(Math.max(...feelsLikeData))}°
-              </Text>
-            </Box>
-          </Box>
+          )}
 
           {/* Wind sparkline with max speed */}
-          <Box flexDirection="column" marginTop={1}>
+          <Box flexDirection="column" marginTop={showFeelsLike ? 1 : 0}>
             <Box gap={2}>
               <Text dimColor>Wind</Text>
               <WindSparkline data={windSpeedData} width={hours * 4} />
@@ -166,22 +172,24 @@ export function HourlyForecastPanel({
           </Box>
 
           {/* Wind Gusts sparkline - NEW */}
-          <Box flexDirection="column" marginTop={1}>
-            <Box gap={2}>
-              <Text dimColor>Gust</Text>
-              <Sparkline
-                data={windGustData}
-                width={hours * 4}
-                color={SEMANTIC_COLORS.alert.warning}
-              />
+          {showGust && (
+            <Box flexDirection="column" marginTop={1}>
+              <Box gap={2}>
+                <Text dimColor>Gust</Text>
+                <Sparkline
+                  data={windGustData}
+                  width={hours * 4}
+                  color={SEMANTIC_COLORS.alert.warning}
+                />
+              </Box>
+              <Box gap={1} marginTop={0}>
+                <Text dimColor>Max:</Text>
+                <Text color={SEMANTIC_COLORS.alert.warning}>
+                  {Math.round(Math.max(...windGustData))} km/h
+                </Text>
+              </Box>
             </Box>
-            <Box gap={1} marginTop={0}>
-              <Text dimColor>Max:</Text>
-              <Text color={SEMANTIC_COLORS.alert.warning}>
-                {Math.round(Math.max(...windGustData))} km/h
-              </Text>
-            </Box>
-          </Box>
+          )}
         </Box>
       </Box>
     </Box>
