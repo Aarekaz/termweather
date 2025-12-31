@@ -14,6 +14,7 @@ import {
   SmallAnimatedIcon,
 } from "@/components/animated-weather-icons"
 import { getCurrentLocation, hourlyForecasts, dailyForecasts } from "@/lib/mock-data"
+import { EnvironmentalGrid } from "@/components/environmental-grid"
 import Link from "next/link"
 
 function MobileHomeContent() {
@@ -68,6 +69,18 @@ function MobileHomeContent() {
           </div>
           <div className="border-3 border-black p-3 mt-2">{getMainIcon()}</div>
         </div>
+
+        {/* Natural Language Summary - Mobile */}
+        {currentLocation.summary && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <p className="text-xs text-gray-600 leading-relaxed">{currentLocation.summary}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Environmental Metrics - Mobile */}
+      <div className="p-4 border-b border-gray-200">
+        <EnvironmentalGrid location={currentLocation} />
       </div>
 
       {/* Hourly Forecast */}
@@ -81,7 +94,15 @@ function MobileHomeContent() {
               }`}
             >
               <div className="text-[10px] font-bold mb-1.5 whitespace-nowrap">{hour.time}</div>
-              <div className="text-base font-bold">{hour.temp}°</div>
+              <div className="text-base font-bold mb-1">{hour.temp}°</div>
+              {hour.icon && (
+                <div className="flex justify-center mb-0.5">
+                  <SmallAnimatedIcon type={hour.icon} />
+                </div>
+              )}
+              {hour.precipChance > 0 && (
+                <div className="text-[9px] text-blue-600 font-bold">{hour.precipChance}%</div>
+              )}
             </div>
           ))}
         </div>

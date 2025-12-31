@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { DesktopCard } from "@/components/responsive-layout"
 import { SmallAnimatedIcon } from "@/components/animated-weather-icons"
 import { getCurrentLocation, hourlyForecasts, dailyForecasts } from "@/lib/mock-data"
+import { EnvironmentalGrid } from "@/components/environmental-grid"
+import { HourlyForecastChart } from "@/components/hourly-forecast-chart"
 import Link from "next/link"
 import ReactAnimatedWeather from "react-animated-weather"
 
@@ -59,27 +61,20 @@ export function DesktopHome() {
           </div>
           <div className="border-3 border-black p-5">{getMainIcon()}</div>
         </div>
+
+        {/* Natural Language Summary */}
+        {currentLocation.summary && (
+          <div className="mt-5 pt-5 border-t-2 border-black">
+            <p className="text-sm text-gray-600 leading-relaxed">{currentLocation.summary}</p>
+          </div>
+        )}
       </DesktopCard>
 
-      {/* Hourly Forecast */}
-      <DesktopCard className="p-5">
-        <h2 className="text-lg font-bold mb-3 border-b-2 border-black pb-2.5">24-HOUR FORECAST</h2>
-        <div className="overflow-x-auto scrollbar-hide">
-          <div className="flex gap-0 min-w-max">
-            {hourlyData.map((hour, i) => (
-              <div
-                key={i}
-                className={`flex-shrink-0 w-[70px] p-3 text-center border-r-2 border-gray-200 last:border-r-0 ${
-                  i === 1 ? "bg-black text-white" : "hover:bg-gray-50"
-                } transition-colors cursor-pointer`}
-              >
-                <div className="text-[10px] font-bold mb-1.5">{hour.time}</div>
-                <div className="text-lg font-bold">{hour.temp}°</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </DesktopCard>
+      {/* Environmental Metrics Grid */}
+      <EnvironmentalGrid location={currentLocation} />
+
+      {/* Hourly Forecast with Chart */}
+      <HourlyForecastChart data={hourlyData} />
 
       {/* Weekly Forecast */}
       <DesktopCard className="p-5">
