@@ -8,9 +8,14 @@
     "build": "turbo run build",
     "build:core": "turbo run build --filter=@weather/core",
     "build:web": "turbo run build --filter=@weather/web",
+    "build:cli": "turbo run build --filter=termweather",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "version:patch": "cd packages/cli && npm version patch --git-tag-version false && cd ../.. && git add packages/cli/package.json && git commit -m \"chore: bump termweather to $(cat packages/cli/package.json | grep '\"version\"' | cut -d'\"' -f4)\" && git tag \"v$(cat packages/cli/package.json | grep '\"version\"' | cut -d'\"' -f4)\"",
+    "version:minor": "cd packages/cli && npm version minor --git-tag-version false && cd ../.. && git add packages/cli/package.json && git commit -m \"chore: bump termweather to $(cat packages/cli/package.json | grep '\"version\"' | cut -d'\"' -f4)\" && git tag \"v$(cat packages/cli/package.json | grep '\"version\"' | cut -d'\"' -f4)\"",
+    "version:major": "cd packages/cli && npm version major --git-tag-version false && cd ../.. && git add packages/cli/package.json && git commit -m \"chore: bump termweather to $(cat packages/cli/package.json | grep '\"version\"' | cut -d'\"' -f4)\" && git tag \"v$(cat packages/cli/package.json | grep '\"version\"' | cut -d'\"' -f4)\"",
+    "publish:cli": "pnpm build:cli && cd packages/cli && npm publish"
   },
   "devDependencies": {
     "turbo": "^2.3.3",
