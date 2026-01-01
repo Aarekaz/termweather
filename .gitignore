@@ -6,3 +6,4 @@ dist/
 build/
 pnpm-lock.yaml
 bun.lock
+.turbo/

@@ -1,0 +1,40 @@
+{
+  "name": "@weather/cli",
+  "version": "1.0.0",
+  "description": "Weather CLI - get weather from your terminal",
+  "type": "module",
+  "bin": {
+    "weather": "./bin/weather.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node ./bin/weather.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@weather/core": "workspace:*",
+    "@weather/tui": "workspace:*",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "weather",
+    "cli",
+    "terminal",
+    "forecast"
+  ],
+  "author": "",
+  "license": "MIT"
+}

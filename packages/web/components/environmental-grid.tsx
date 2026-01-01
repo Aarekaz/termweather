@@ -1,4 +1,4 @@
-import type { Location } from "@/lib/mock-data"
+import type { LegacyLocation } from "@/lib/weather-adapter"
 import {
   HumidityCard,
   UVIndexCard,
@@ -11,7 +11,7 @@ import {
 } from "@/components/widgets"
 
 interface EnvironmentalGridProps {
-  location: Location
+  location: LegacyLocation
 }
 
 export function EnvironmentalGrid({ location }: EnvironmentalGridProps) {

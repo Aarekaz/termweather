@@ -1,24 +1,50 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { DesktopCard } from "@/components/responsive-layout"
 import { SmallAnimatedIcon } from "@/components/animated-weather-icons"
-import { getCurrentLocation, hourlyForecasts, dailyForecasts } from "@/lib/mock-data"
 import { EnvironmentalGrid } from "@/components/environmental-grid"
 import { HourlyForecastChart } from "@/components/hourly-forecast-chart"
+import { useWeatherContext } from "@/contexts/weather-context"
+import { adaptWeatherData } from "@/lib/weather-adapter"
 import Link from "next/link"
 import ReactAnimatedWeather from "react-animated-weather"
+import { Loader2 } from "lucide-react"
 
 export function DesktopHome() {
-  const [currentLocation] = useState(getCurrentLocation())
-  const hourlyData = hourlyForecasts[currentLocation.id] || hourlyForecasts.nyc
-  const weeklyData = dailyForecasts[currentLocation.id] || dailyForecasts.nyc
-  const highTemp = currentLocation.temp + 6
-  const lowTemp = currentLocation.temp - 6
+  const { currentLocation, getWeatherForLocation, loading } = useWeatherContext()
+
+  // Get weather data for current location
+  const weatherData = currentLocation ? getWeatherForLocation(currentLocation.id) : null
+  const adapted = weatherData ? adaptWeatherData(weatherData, true) : null
+
+  if (loading && !adapted) {
+    return (
+      <DesktopCard className="p-6">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <span className="ml-3 text-gray-500">Loading weather data...</span>
+        </div>
+      </DesktopCard>
+    )
+  }
+
+  if (!adapted) {
+    return (
+      <DesktopCard className="p-6">
+        <div className="flex items-center justify-center h-64 text-gray-500">
+          <p>No weather data available</p>
+        </div>
+      </DesktopCard>
+    )
+  }
+
+  const { location: currentLocationData, hourly: hourlyData, daily: weeklyData } = adapted
+  const highTemp = weeklyData[0]?.high ?? currentLocationData.temp + 6
+  const lowTemp = weeklyData[0]?.low ?? currentLocationData.temp - 6
 
   const getMainIcon = () => {
-    switch (currentLocation.icon) {
+    switch (currentLocationData.icon) {
       case "rain":
         return <ReactAnimatedWeather icon="RAIN" color="#2563eb" size={120} animate={true} />
       case "sun":
@@ -28,7 +54,7 @@ export function DesktopHome() {
       case "snow":
         return <ReactAnimatedWeather icon="SNOW" color="#93c5fd" size={120} animate={true} />
       default:
-        return <ReactAnimatedWeather icon="RAIN" color="#2563eb" size={120} animate={true} />
+        return <ReactAnimatedWeather icon="CLOUDY" color="#9ca3af" size={120} animate={true} />
     }
   }
 
@@ -38,8 +64,8 @@ export function DesktopHome() {
       <DesktopCard className="p-6">
         <div className="flex items-start justify-between mb-5">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{currentLocation.name}</h1>
-            <p className="text-xs text-gray-500 font-mono mt-1">{currentLocation.coords}</p>
+            <h1 className="text-3xl font-bold tracking-tight">{currentLocationData.name}</h1>
+            <p className="text-xs text-gray-500 font-mono mt-1">{currentLocationData.coords}</p>
           </div>
           <Link href="/search">
             <Button
@@ -53,8 +79,8 @@ export function DesktopHome() {
 
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[120px] font-bold leading-none tracking-tight">{currentLocation.temp}°</div>
-            <div className="text-4xl font-bold text-blue-600 mt-3">{currentLocation.condition}</div>
+            <div className="text-[120px] font-bold leading-none tracking-tight">{currentLocationData.temp}°</div>
+            <div className="text-4xl font-bold text-blue-600 mt-3">{currentLocationData.condition}</div>
             <div className="text-2xl font-bold mt-3">
               {highTemp}°/{lowTemp}°
             </div>
@@ -63,15 +89,15 @@ export function DesktopHome() {
         </div>
 
         {/* Natural Language Summary */}
-        {currentLocation.summary && (
+        {currentLocationData.summary && (
           <div className="mt-5 pt-5 border-t-2 border-black">
-            <p className="text-sm text-gray-600 leading-relaxed">{currentLocation.summary}</p>
+            <p className="text-sm text-gray-600 leading-relaxed">{currentLocationData.summary}</p>
           </div>
         )}
       </DesktopCard>
 
       {/* Environmental Metrics Grid */}
-      <EnvironmentalGrid location={currentLocation} />
+      <EnvironmentalGrid location={currentLocationData} />
 
       {/* Hourly Forecast with Chart */}
       <HourlyForecastChart data={hourlyData} />
