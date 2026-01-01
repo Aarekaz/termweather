@@ -162,6 +162,7 @@ export class WeatherClient {
       'rain',
       'weather_code',
       'cloud_cover',
+      'visibility',
       'pressure_msl',
       'surface_pressure',
       'wind_speed_10m',
@@ -178,6 +179,7 @@ export class WeatherClient {
       'weather_code',
       'wind_speed_10m',
       'wind_direction_10m',
+      'surface_pressure',
       'is_day',
     ].join(',')
 
@@ -245,10 +247,9 @@ export class WeatherClient {
     const daily = forecast.daily!
 
     // Get hourly pressures for trend calculation
-    const recentPressures = hourly.temperature_2m.slice(0, 6).map((_, i) => {
-      // Use temperature as placeholder since we don't have hourly pressure
-      return current.surface_pressure
-    })
+    const recentPressures =
+      hourly.surface_pressure?.slice(0, 6) ??
+      Array.from({ length: 6 }, () => current.surface_pressure)
 
     const currentWeather: CurrentWeather = {
       temperature: current.temperature_2m,
@@ -260,7 +261,7 @@ export class WeatherClient {
       windGusts: current.wind_gusts_10m,
       pressure: current.surface_pressure,
       pressureTrend: calculatePressureTrend(recentPressures),
-      visibility: current.visibility ?? 10, // Default to 10km if not available
+      visibility: current.visibility != null ? current.visibility / 1000 : 10,
       cloudCover: current.cloud_cover,
       weatherCode: current.weather_code,
       condition: getConditionFromCode(current.weather_code),

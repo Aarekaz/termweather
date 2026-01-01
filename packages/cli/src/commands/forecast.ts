@@ -50,13 +50,18 @@ export const forecastCommand = new Command('forecast')
       }
 
       const type = options?.hourly ? 'hourly' : 'daily';
+      const parsedDays = Number.parseInt(options?.days ?? '7', 10);
+      const parsedHours = Number.parseInt(options?.hours ?? '24', 10);
+      const limit = type === 'hourly'
+        ? Math.min(Math.max(Number.isFinite(parsedHours) ? parsedHours : 24, 1), 48)
+        : Math.min(Math.max(Number.isFinite(parsedDays) ? parsedDays : 7, 1), 7);
 
       if (options?.json) {
-        console.log(formatForecastJson(weather, type));
+        console.log(formatForecastJson(weather, type, limit));
       } else if (options?.compact) {
-        console.log(formatForecastCompact(weather, type));
+        console.log(formatForecastCompact(weather, type, limit));
       } else {
-        console.log(formatForecastTable(weather, type));
+        console.log(formatForecastTable(weather, type, limit));
       }
     } catch (error) {
       console.error(

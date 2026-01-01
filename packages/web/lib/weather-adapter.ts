@@ -35,7 +35,7 @@ export interface LegacyLocation {
   pressure: number
   pressureTrend: PressureTrend
   visibility: number
-  airQuality: number
+  airQuality: number | null
   sunrise: string
   sunset: string
 }
@@ -157,8 +157,8 @@ export function toLocation(data: WeatherData, isCurrent: boolean = false): Legac
     feelsLike: Math.round(current.feelsLike),
     pressure: Math.round(current.pressure),
     pressureTrend: current.pressureTrend,
-    visibility: Math.round(current.visibility / 1000), // Convert m to km if needed
-    airQuality: airQuality?.aqi ?? 50,
+    visibility: Math.round(current.visibility),
+    airQuality: airQuality?.aqi ?? null,
     sunrise: sunTimes.sunrise,
     sunset: sunTimes.sunset,
   }

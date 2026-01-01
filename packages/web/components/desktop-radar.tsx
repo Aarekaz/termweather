@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Plus, Minus, Compass, Play, Pause, Layers } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DesktopCard } from "@/components/responsive-layout"
@@ -10,6 +10,16 @@ export function DesktopRadar() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showLayers, setShowLayers] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)
+  const rainDrops = useMemo(
+    () =>
+      Array.from({ length: 20 }, (_, i) => ({
+        id: i,
+        left: `${Math.random() * 100}%`,
+        delay: `${Math.random() * 2}s`,
+        duration: `${0.5 + Math.random() * 0.5}s`,
+      })),
+    []
+  )
 
   useEffect(() => {
     if (!isPlaying) return
@@ -25,8 +35,9 @@ export function DesktopRadar() {
   }, [isPlaying])
 
   const formatTime = (time: number) => {
-    const hours = Math.floor(time)
-    const minutes = Math.round((time % 1) * 60)
+    const totalMinutes = Math.round(time * 60)
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
   }
 
@@ -65,14 +76,14 @@ export function DesktopRadar() {
 
         {/* Rain animation overlay */}
         <div className="absolute inset-0 opacity-30">
-          {[...Array(20)].map((_, i) => (
+          {rainDrops.map((drop) => (
             <div
-              key={i}
+              key={drop.id}
               className="absolute w-0.5 h-4 bg-blue-500 animate-rain"
               style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${0.5 + Math.random() * 0.5}s`,
+                left: drop.left,
+                animationDelay: drop.delay,
+                animationDuration: drop.duration,
               }}
             />
           ))}

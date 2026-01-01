@@ -6,11 +6,14 @@ export function formatWeatherJson(weather: WeatherData): string {
 
 export function formatForecastJson(
   weather: WeatherData,
-  type: 'hourly' | 'daily'
+  type: 'hourly' | 'daily',
+  limit?: number
 ): string {
+  const hourly = limit ? weather.hourly.slice(0, limit) : weather.hourly;
+  const daily = limit ? weather.daily.slice(0, limit) : weather.daily;
   const data = {
     location: weather.location,
-    forecast: type === 'hourly' ? weather.hourly : weather.daily,
+    forecast: type === 'hourly' ? hourly : daily,
     lastUpdated: weather.lastUpdated,
   };
   return JSON.stringify(data, null, 2);

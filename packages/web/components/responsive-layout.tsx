@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useMemo } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -10,6 +11,16 @@ interface ResponsiveLayoutProps {
 
 export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
   const pathname = usePathname()
+  const desktopStars = useMemo(
+    () =>
+      Array.from({ length: 50 }, (_, i) => ({
+        id: i,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        twinkle: i % 3 === 0,
+      })),
+    []
+  )
 
   return (
     <>
@@ -67,13 +78,13 @@ export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
       <div className="hidden lg:block min-h-screen bg-[#0a0a0f]">
         {/* Starry background */}
         <div className="fixed inset-0 opacity-30">
-          {[...Array(50)].map((_, i) => (
+          {desktopStars.map((star) => (
             <div
-              key={i}
-              className={`absolute w-1 h-1 bg-white rounded-full ${i % 3 === 0 ? "animate-pulse" : ""}`}
+              key={star.id}
+              className={`absolute w-1 h-1 bg-white rounded-full ${star.twinkle ? "animate-pulse" : ""}`}
               style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
+                top: star.top,
+                left: star.left,
               }}
             />
           ))}

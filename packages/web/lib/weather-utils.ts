@@ -34,7 +34,8 @@ export function getUVBackground(uvIndex: number): string {
  * Get Tailwind background class for AQI
  * (Web-specific - uses Tailwind classes)
  */
-export function getAQIBackground(aqi: number): string {
+export function getAQIBackground(aqi: number | null): string {
+  if (aqi == null) return "bg-gray-100"
   if (aqi <= 50) return "bg-green-50"
   if (aqi <= 100) return "bg-lime-50"
   if (aqi <= 150) return "bg-yellow-50"

@@ -17,7 +17,7 @@ export interface WeatherMetrics {
   pressure: number
   pressureTrend: PressureTrend
   visibility: number
-  airQuality: number
+  airQuality: number | null
   sunrise: string
   sunset: string
 }
@@ -55,7 +55,7 @@ export interface PressureCardProps extends WidgetCardProps {
 }
 
 export interface AirQualityCardProps extends WidgetCardProps {
-  aqi: number
+  aqi: number | null
 }
 
 export interface VisibilityCardProps extends WidgetCardProps {

@@ -30,12 +30,13 @@ export function formatWeatherCompact(weather: WeatherData): string {
 
 export function formatForecastCompact(
   weather: WeatherData,
-  type: 'hourly' | 'daily'
+  type: 'hourly' | 'daily',
+  limit?: number
 ): string {
   const { location, hourly, daily } = weather;
 
   if (type === 'hourly') {
-    const items = hourly.slice(0, 12).map((h) => {
+    const items = hourly.slice(0, limit ?? 12).map((h) => {
       const time = new Date(h.time).toLocaleTimeString('en-US', {
         hour: 'numeric',
       });
@@ -44,7 +45,7 @@ export function formatForecastCompact(
     });
     return `${location.name} Hourly: ${items.join(' ')}`;
   } else {
-    const items = daily.map((d) => {
+    const items = daily.slice(0, limit ?? daily.length).map((d) => {
       const date = new Date(d.date);
       const day = date.toLocaleDateString('en-US', { weekday: 'short' });
       const emoji = getConditionEmoji(d.condition);

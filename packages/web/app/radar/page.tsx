@@ -28,8 +28,9 @@ function MobileRadarContent() {
   }, [isPlaying])
 
   const formatTime = (time: number) => {
-    const hours = Math.floor(time)
-    const minutes = Math.round((time % 1) * 60)
+    const totalMinutes = Math.round(time * 60)
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
   }
 

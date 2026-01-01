@@ -23,7 +23,7 @@ const DEFAULT_LOCATIONS: Location[] = [
 function App() {
   const { exit } = useApp();
   const [view, setView] = useState<View>('dashboard');
-  const [locations] = useState<Location[]>(DEFAULT_LOCATIONS);
+  const [locations, setLocations] = useState<Location[]>(DEFAULT_LOCATIONS);
   const [currentLocationIndex, setCurrentLocationIndex] = useState(0);
 
   const currentLocation = locations[currentLocationIndex];
@@ -69,18 +69,21 @@ function App() {
   });
 
   const handleLocationSelect = (location: Location) => {
-    // Add to locations if not already present
-    const existingIndex = locations.findIndex(
-      (l) =>
-        l.latitude === location.latitude && l.longitude === location.longitude
-    );
+    setLocations((prev) => {
+      const existingIndex = prev.findIndex(
+        (l) =>
+          l.latitude === location.latitude && l.longitude === location.longitude
+      );
 
-    if (existingIndex >= 0) {
-      setCurrentLocationIndex(existingIndex);
-    } else {
-      locations.push(location);
-      setCurrentLocationIndex(locations.length - 1);
-    }
+      if (existingIndex >= 0) {
+        setCurrentLocationIndex(existingIndex);
+        return prev;
+      }
+
+      const next = [...prev, location];
+      setCurrentLocationIndex(next.length - 1);
+      return next;
+    });
 
     setView('dashboard');
   };

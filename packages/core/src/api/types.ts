@@ -50,6 +50,7 @@ export interface OpenMeteoHourly {
   weather_code: number[]
   wind_speed_10m: number[]
   wind_direction_10m: number[]
+  surface_pressure?: number[]
   is_day: number[]
 }
 

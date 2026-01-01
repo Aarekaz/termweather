@@ -73,7 +73,8 @@ export function formatWeatherTable(weather: WeatherData): string {
 
   const conditionDesc = getConditionDisplay(current.condition);
   const emoji = getConditionEmoji(current.condition);
-  const aqi = weather.airQuality?.aqi ?? 0;
+  const aqi = weather.airQuality?.aqi;
+  const aqiDisplay = aqi == null ? 'N/A' : `${aqi} (${getAQIRating(aqi)})`;
 
   const lines = [
     chalk.bold(`${location.name}, ${location.country}`),
@@ -87,7 +88,7 @@ export function formatWeatherTable(weather: WeatherData): string {
     `${chalk.dim('Humidity')}    ${current.humidity}%      ${chalk.dim('UV Index')}    ${current.uvIndex} (${getUVLevel(current.uvIndex)})`,
     `${chalk.dim('Wind')}        ${formatWindSpeed(current.windSpeed, 'kmh')} ${getWindDirectionFull(current.windDirection)}`,
     `${chalk.dim('Pressure')}    ${formatPressure(current.pressure, 'mb')} ${getPressureTrendSymbol(current.pressureTrend)}`,
-    `${chalk.dim('Visibility')}  ${current.visibility} km   ${chalk.dim('AQI')}         ${aqi} (${getAQIRating(aqi)})`,
+    `${chalk.dim('Visibility')}  ${current.visibility} km   ${chalk.dim('AQI')}         ${aqiDisplay}`,
   ];
 
   return createBox(lines, width);
@@ -95,7 +96,8 @@ export function formatWeatherTable(weather: WeatherData): string {
 
 export function formatForecastTable(
   weather: WeatherData,
-  type: 'hourly' | 'daily'
+  type: 'hourly' | 'daily',
+  limit?: number
 ): string {
   const { location, hourly, daily } = weather;
 
@@ -103,7 +105,7 @@ export function formatForecastTable(
     const header = chalk.bold(`Hourly Forecast - ${location.name}`);
     const separator = '-'.repeat(60);
 
-    const rows = hourly.slice(0, 24).map((h) => {
+    const rows = hourly.slice(0, limit ?? 24).map((h) => {
       const time = new Date(h.time).toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
@@ -117,7 +119,7 @@ export function formatForecastTable(
     const header = chalk.bold(`7-Day Forecast - ${location.name}`);
     const separator = '-'.repeat(60);
 
-    const rows = daily.map((d) => {
+    const rows = daily.slice(0, limit ?? daily.length).map((d) => {
       const date = new Date(d.date);
       const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
       const dateStr = date.toLocaleDateString('en-US', {

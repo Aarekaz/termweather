@@ -40,7 +40,10 @@ interface MetricsProps {
   aqi?: number;
 }
 
-export function Metrics({ current, aqi = 0 }: MetricsProps) {
+export function Metrics({ current, aqi }: MetricsProps) {
+  const aqiDisplay = aqi == null ? 'N/A' : `${aqi} ${getAQIRating(aqi)}`;
+  const aqiColor = aqi == null ? undefined : getAQIColor(aqi);
+
   return (
     <Box flexDirection="column" gap={1}>
       <Box gap={1}>
@@ -61,11 +64,7 @@ export function Metrics({ current, aqi = 0 }: MetricsProps) {
           value={`${formatPressure(current.pressure, 'mb')} ${getPressureTrendSymbol(current.pressureTrend)}`}
         />
         <MetricBox label="Visibility" value={`${current.visibility} km`} />
-        <MetricBox
-          label="Air Quality"
-          value={`${aqi} ${getAQIRating(aqi)}`}
-          color={getAQIColor(aqi)}
-        />
+        <MetricBox label="Air Quality" value={aqiDisplay} color={aqiColor} />
       </Box>
     </Box>
   );
