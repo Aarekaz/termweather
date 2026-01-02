@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { WeatherClient, type WeatherData } from '@weather/core';
 
 interface UseWeatherDataOptions {
@@ -83,8 +83,12 @@ export function useLocationSearch(): UseLocationSearchResult {
   const [results, setResults] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const requestId = useRef(0);
 
   const search = useCallback(async (query: string) => {
+    const currentRequest = requestId.current + 1;
+    requestId.current = currentRequest;
+
     if (!query.trim()) {
       setResults([]);
       return;
@@ -97,6 +101,10 @@ export function useLocationSearch(): UseLocationSearchResult {
       const client = new WeatherClient();
       const locations = await client.searchLocation(query);
 
+      if (requestId.current !== currentRequest) {
+        return;
+      }
+
       setResults(
         locations.map((loc) => ({
           name: `${loc.name}${loc.admin1 ? `, ${loc.admin1}` : ''}, ${loc.country}`,
@@ -105,16 +113,23 @@ export function useLocationSearch(): UseLocationSearchResult {
         }))
       );
     } catch (err) {
+      if (requestId.current !== currentRequest) {
+        return;
+      }
       setError(err instanceof Error ? err : new Error('Failed to search'));
       setResults([]);
     } finally {
-      setLoading(false);
+      if (requestId.current === currentRequest) {
+        setLoading(false);
+      }
     }
   }, []);
 
   const clear = useCallback(() => {
+    requestId.current += 1;
     setResults([]);
     setError(null);
+    setLoading(false);
   }, []);
 
   return { results, loading, error, search, clear };

@@ -102,10 +102,11 @@ export function formatForecastTable(
   const { location, hourly, daily } = weather;
 
   if (type === 'hourly') {
-    const header = chalk.bold(`Hourly Forecast - ${location.name}`);
+    const hours = limit ?? 24;
+    const header = chalk.bold(`${hours}-Hour Forecast - ${location.name}`);
     const separator = '-'.repeat(60);
 
-    const rows = hourly.slice(0, limit ?? 24).map((h) => {
+    const rows = hourly.slice(0, hours).map((h) => {
       const time = new Date(h.time).toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
@@ -116,10 +117,11 @@ export function formatForecastTable(
 
     return [header, separator, ...rows].join('\n');
   } else {
-    const header = chalk.bold(`7-Day Forecast - ${location.name}`);
+    const days = limit ?? daily.length;
+    const header = chalk.bold(`${days}-Day Forecast - ${location.name}`);
     const separator = '-'.repeat(60);
 
-    const rows = daily.slice(0, limit ?? daily.length).map((d) => {
+    const rows = daily.slice(0, days).map((d) => {
       const date = new Date(d.date);
       const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
       const dateStr = date.toLocaleDateString('en-US', {

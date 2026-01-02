@@ -11,9 +11,10 @@ interface Location {
 
 interface SearchProps {
   onSelect: (location: Location) => void;
+  onCancel: () => void;
 }
 
-export function Search({ onSelect }: SearchProps) {
+export function Search({ onSelect, onCancel }: SearchProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { results, loading, error, search, clear } = useLocationSearch();
@@ -42,6 +43,7 @@ export function Search({ onSelect }: SearchProps) {
     } else if (key.escape) {
       setQuery('');
       clear();
+      onCancel();
     }
   });
 

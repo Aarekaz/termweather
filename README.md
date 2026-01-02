@@ -1,4 +1,4 @@
-# termweather
+# Termweather
 
 Beautiful weather in your terminal - CLI commands + interactive TUI dashboard.
 
@@ -116,6 +116,64 @@ Weather data is provided by [Open-Meteo](https://open-meteo.com/) - a free, open
 
 - Node.js 18 or higher
 - A terminal that supports Unicode and colors
+
+
+# Self - setup
+
+## Prereqs
+- Node.js + pnpm
+
+## Install
+```
+pnpm install
+```
+
+## Web app
+From repo root:
+```
+pnpm --filter @weather/web dev
+```
+Then open the URL shown in the terminal (usually http://localhost:3000).
+
+## CLI (one-off)
+Run without global install:
+```
+pnpm --filter termweather start
+```
+
+## CLI (global `weather` command)
+```
+cd packages/cli
+pnpm link --global
+```
+Then:
+```
+weather
+```
+
+## TUI (interactive dashboard)
+- From repo root (no global link):
+```
+pnpm --filter termweather start
+```
+- Or after global link:
+```
+weather
+```
+
+### TUI keys
+- `/` search
+- `d` dashboard
+- `f` forecast
+- `r` refresh
+- `q` quit
+- arrows: cycle saved locations
+- `Esc` cancel search
+
+## Notes
+- `weather-tui` is also available after global link.
+
+
 
 ## License
 

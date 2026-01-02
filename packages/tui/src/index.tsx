@@ -36,6 +36,12 @@ function App() {
 
   // Handle keyboard input
   useInput((input, key) => {
+    if (view === 'search') {
+      if (key.ctrl && input === 'c') {
+        exit();
+      }
+      return;
+    }
     // Global navigation
     if (input === 'q') {
       exit();
@@ -125,7 +131,12 @@ function App() {
           <>
             {view === 'dashboard' && <Dashboard data={data} loading={loading} />}
             {view === 'forecast' && <Forecast data={data} loading={loading} />}
-            {view === 'search' && <Search onSelect={handleLocationSelect} />}
+            {view === 'search' && (
+              <Search
+                onSelect={handleLocationSelect}
+                onCancel={() => setView('dashboard')}
+              />
+            )}
           </>
         )}
       </Box>

@@ -36,22 +36,24 @@ export function formatForecastCompact(
   const { location, hourly, daily } = weather;
 
   if (type === 'hourly') {
-    const items = hourly.slice(0, limit ?? 12).map((h) => {
+    const hours = limit ?? 12;
+    const items = hourly.slice(0, hours).map((h) => {
       const time = new Date(h.time).toLocaleTimeString('en-US', {
         hour: 'numeric',
       });
       const emoji = getConditionEmoji(h.condition);
       return `${time}:${formatTemperature(h.temperature, 'C')}${emoji}`;
     });
-    return `${location.name} Hourly: ${items.join(' ')}`;
+    return `${location.name} Next ${hours} Hours: ${items.join(' ')}`;
   } else {
-    const items = daily.slice(0, limit ?? daily.length).map((d) => {
+    const days = limit ?? daily.length;
+    const items = daily.slice(0, days).map((d) => {
       const date = new Date(d.date);
       const day = date.toLocaleDateString('en-US', { weekday: 'short' });
       const emoji = getConditionEmoji(d.condition);
       return `${day}:${formatTemperature(d.temperatureMax, 'C')}/${formatTemperature(d.temperatureMin, 'C')}${emoji}`;
     });
-    return `${location.name} Weekly: ${items.join(' ')}`;
+    return `${location.name} Next ${days} Days: ${items.join(' ')}`;
   }
 }
 

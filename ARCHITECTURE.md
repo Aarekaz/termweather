@@ -814,11 +814,3 @@ packages:
 7. **Shortcuts** - Global keyboard shortcuts for quick weather check
 
 ---
-
-## Questions to Address Before Implementation
-
-1. Should we use Turborepo for build orchestration? (Recommended: Yes)
-2. Caching strategy - in-memory vs file-based for CLI/TUI?
-3. Default location - IP geolocation or user must set?
-4. Should web app support SSR or stay client-side?
-5. Should CLI support piping/streaming for watch mode?
