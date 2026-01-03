@@ -25,23 +25,29 @@ function App() {
   const [view, setView] = useState<View>('dashboard');
   const [locations, setLocations] = useState<Location[]>(DEFAULT_LOCATIONS);
   const [currentLocationIndex, setCurrentLocationIndex] = useState(0);
+  const [animationsEnabled, setAnimationsEnabled] = useState(true);
 
   const currentLocation = locations[currentLocationIndex];
 
   const { data, loading, error, lastUpdated, refetch } = useWeatherData(
     currentLocation.latitude,
     currentLocation.longitude,
-    { refreshInterval: 5 * 60 * 1000 } // 5 minutes
+    {
+      refreshInterval: 5 * 60 * 1000, // 5 minutes
+      locationName: currentLocation.name // Fix "Unknown" issue
+    }
   );
 
   // Handle keyboard input
   useInput((input, key) => {
+    // Special handling for search view
     if (view === 'search') {
       if (key.ctrl && input === 'c') {
         exit();
       }
       return;
     }
+
     // Global navigation
     if (input === 'q') {
       exit();
@@ -58,19 +64,21 @@ function App() {
     if (input === 'r') {
       refetch();
     }
+    // Toggle animations
+    if (input === 'a') {
+      setAnimationsEnabled((prev) => !prev);
+    }
 
-    // Location switching with arrow keys (only when not in search)
-    if (view !== 'search') {
-      if (key.leftArrow) {
-        setCurrentLocationIndex((prev) =>
-          prev === 0 ? locations.length - 1 : prev - 1
-        );
-      }
-      if (key.rightArrow) {
-        setCurrentLocationIndex((prev) =>
-          prev === locations.length - 1 ? 0 : prev + 1
-        );
-      }
+    // Location switching with arrow keys
+    if (key.leftArrow) {
+      setCurrentLocationIndex((prev) =>
+        prev === 0 ? locations.length - 1 : prev - 1
+      );
+    }
+    if (key.rightArrow) {
+      setCurrentLocationIndex((prev) =>
+        prev === locations.length - 1 ? 0 : prev + 1
+      );
     }
   });
 
@@ -96,31 +104,7 @@ function App() {
 
   return (
     <Box flexDirection="column" width="100%">
-      {/* Header */}
-      <Box
-        borderStyle="double"
-        borderColor="cyan"
-        paddingX={1}
-        justifyContent="space-between"
-      >
-        <Text bold color="cyan">
-          Weather TUI
-        </Text>
-        <Box gap={1}>
-          {view !== 'search' && (
-            <>
-              <Text dimColor>{'<'}</Text>
-              <Text bold>{currentLocation.name}</Text>
-              <Text dimColor>{'>'}</Text>
-            </>
-          )}
-        </Box>
-        <Text dimColor>
-          [{currentLocationIndex + 1}/{locations.length}]
-        </Text>
-      </Box>
-
-      {/* Main Content */}
+      {/* Main Content - Dashboard now includes header */}
       <Box flexGrow={1} minHeight={20}>
         {error && view !== 'search' ? (
           <Box padding={2}>
@@ -129,7 +113,15 @@ function App() {
           </Box>
         ) : (
           <>
-            {view === 'dashboard' && <Dashboard data={data} loading={loading} />}
+            {view === 'dashboard' && (
+              <Dashboard
+                data={data}
+                loading={loading}
+                animationsEnabled={animationsEnabled}
+                locationIndex={currentLocationIndex}
+                totalLocations={locations.length}
+              />
+            )}
             {view === 'forecast' && <Forecast data={data} loading={loading} />}
             {view === 'search' && (
               <Search

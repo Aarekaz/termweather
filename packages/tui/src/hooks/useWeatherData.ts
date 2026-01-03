@@ -3,6 +3,7 @@ import { WeatherClient, type WeatherData } from '@weather/core';
 
 interface UseWeatherDataOptions {
   refreshInterval?: number; // in milliseconds
+  locationName?: string; // Optional location name to override "Unknown"
 }
 
 interface UseWeatherDataResult {
@@ -18,7 +19,7 @@ export function useWeatherData(
   lon: number | null,
   options: UseWeatherDataOptions = {}
 ): UseWeatherDataResult {
-  const { refreshInterval = 5 * 60 * 1000 } = options; // Default: 5 minutes
+  const { refreshInterval = 5 * 60 * 1000, locationName } = options; // Default: 5 minutes
 
   const [data, setData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,6 +39,11 @@ export function useWeatherData(
       const client = new WeatherClient();
       const weather = await client.getWeather(lat, lon);
 
+      // Override location name if provided (fixes "Unknown" issue)
+      if (locationName) {
+        weather.location.name = locationName;
+      }
+
       setData(weather);
       setLastUpdated(new Date());
     } catch (err) {
@@ -45,7 +51,7 @@ export function useWeatherData(
     } finally {
       setLoading(false);
     }
-  }, [lat, lon]);
+  }, [lat, lon, locationName]);
 
   useEffect(() => {
     fetchWeather();

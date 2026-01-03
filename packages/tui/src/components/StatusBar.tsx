@@ -17,21 +17,35 @@ export function StatusBar({ view, lastUpdated, loading }: StatusBarProps) {
 
   return (
     <Box
-      borderStyle="single"
+      borderStyle="round"
       borderColor="gray"
-      paddingX={1}
+      paddingX={2}
       justifyContent="space-between"
     >
-      <Box>
+      {/* Left: Navigation shortcuts */}
+      <Box gap={1}>
         <Text dimColor>[d]</Text>
-        <Text color={view === 'dashboard' ? 'cyan' : undefined}> Dashboard </Text>
+        <Text color={view === 'dashboard' ? 'cyan' : 'white'}>Dashboard</Text>
         <Text dimColor>[f]</Text>
-        <Text color={view === 'forecast' ? 'cyan' : undefined}> Forecast </Text>
+        <Text color={view === 'forecast' ? 'cyan' : 'white'}>Forecast</Text>
         <Text dimColor>[/]</Text>
-        <Text color={view === 'search' ? 'cyan' : undefined}> Search </Text>
-        <Text dimColor>[q] Quit</Text>
+        <Text color={view === 'search' ? 'cyan' : 'white'}>Search</Text>
       </Box>
-      <Box>
+
+      {/* Right: Status indicators */}
+      <Box gap={2}>
+        <Box gap={1}>
+          <Text dimColor>[a]</Text>
+          <Text>Animations</Text>
+        </Box>
+        <Box gap={1}>
+          <Text dimColor>[r]</Text>
+          <Text>Refresh</Text>
+        </Box>
+        <Box gap={1}>
+          <Text dimColor>[q]</Text>
+          <Text>Quit</Text>
+        </Box>
         {loading ? (
           <Text color="yellow">Updating...</Text>
         ) : lastUpdated ? (

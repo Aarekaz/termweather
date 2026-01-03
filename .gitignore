@@ -6,3 +6,5 @@ dist/
 build/
 bun.lock
 .turbo/
+.conductor/
+.claude/
