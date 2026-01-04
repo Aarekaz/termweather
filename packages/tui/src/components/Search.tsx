@@ -2,22 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import { useLocationSearch } from '../hooks/useWeatherData.js';
-
-interface Location {
-  name: string;
-  latitude: number;
-  longitude: number;
-}
+import type { Location } from '../types/config.js';
 
 interface SearchProps {
   onSelect: (location: Location) => void;
   onCancel: () => void;
+  savedLocations?: Location[];
+  onSave?: (location: Location) => void;
+  onDelete?: (latitude: number, longitude: number) => void;
+  isEmbedded?: boolean;
 }
 
-export function Search({ onSelect, onCancel }: SearchProps) {
+export function Search({
+  onSelect,
+  onCancel,
+  savedLocations = [],
+  onSave,
+  onDelete,
+  isEmbedded = false,
+}: SearchProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { results, loading, error, search, clear } = useLocationSearch();
+
+  // Combined list of saved locations + search results
+  type ListItem =
+    | { type: 'saved'; location: Location; index: number }
+    | { type: 'search'; location: Location; index: number };
+
+  const allItems: ListItem[] = [
+    ...savedLocations.map((loc, i) => ({
+      type: 'saved' as const,
+      location: loc,
+      index: i,
+    })),
+    ...results.map((loc, i) => ({
+      type: 'search' as const,
+      location: loc,
+      index: i,
+    })),
+  ];
 
   useEffect(() => {
     const debounce = setTimeout(() => {
@@ -32,18 +56,36 @@ export function Search({ onSelect, onCancel }: SearchProps) {
   }, [query, search, clear]);
 
   useInput((input, key) => {
+    const maxIndex = allItems.length - 1;
+
     if (key.upArrow) {
       setSelectedIndex((prev) => Math.max(0, prev - 1));
     } else if (key.downArrow) {
-      setSelectedIndex((prev) => Math.min(results.length - 1, prev + 1));
-    } else if (key.return && results.length > 0) {
-      onSelect(results[selectedIndex]);
-      setQuery('');
-      clear();
+      setSelectedIndex((prev) => Math.min(maxIndex, prev + 1));
+    } else if (key.return && allItems.length > 0) {
+      const selected = allItems[selectedIndex];
+      if (selected) {
+        onSelect(selected.location);
+        setQuery('');
+        clear();
+      }
     } else if (key.escape) {
       setQuery('');
       clear();
       onCancel();
+    } else if (input === 's' && onSave) {
+      // Save location (only for search results)
+      const selected = allItems[selectedIndex];
+      if (selected && selected.type === 'search') {
+        onSave(selected.location);
+      }
+    } else if (input === 'd' && onDelete) {
+      // Delete location (only for saved locations)
+      const selected = allItems[selectedIndex];
+      if (selected && selected.type === 'saved') {
+        onDelete(selected.location.latitude, selected.location.longitude);
+        setSelectedIndex(Math.max(0, selectedIndex - 1));
+      }
     }
   });
 
@@ -76,23 +118,55 @@ export function Search({ onSelect, onCancel }: SearchProps) {
         </Box>
       )}
 
+      {/* Saved Locations Section */}
+      {savedLocations.length > 0 && (
+        <Box flexDirection="column" marginTop={1}>
+          <Text color="yellow" bold>
+            SAVED LOCATIONS ({savedLocations.length})
+          </Text>
+          <Box flexDirection="column" marginTop={0}>
+            {savedLocations.map((loc, i) => {
+              const isSelected = selectedIndex === i;
+              return (
+                <Box key={`saved-${i}`} gap={1}>
+                  <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
+                    {isSelected ? '> ' : '  '}★ {loc.name}
+                  </Text>
+                  {isSelected && onDelete && (
+                    <Text dimColor> [d] delete</Text>
+                  )}
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
+      )}
+
+      {/* Search Results Section */}
       {results.length > 0 && (
         <Box flexDirection="column" marginTop={1}>
-          <Text dimColor>
-            Use arrow keys to select, Enter to confirm, Esc to cancel
+          <Text color="cyan" bold>
+            SEARCH RESULTS ({results.length})
           </Text>
-          <Box flexDirection="column" marginTop={1}>
-            {results.map((loc, index) => (
-              <Box key={index}>
-                <Text
-                  color={index === selectedIndex ? 'cyan' : undefined}
-                  bold={index === selectedIndex}
-                >
-                  {index === selectedIndex ? '> ' : '  '}
-                  {loc.name}
-                </Text>
-              </Box>
-            ))}
+          <Box flexDirection="column" marginTop={0}>
+            {results.map((loc, i) => {
+              const globalIndex = savedLocations.length + i;
+              const isSelected = selectedIndex === globalIndex;
+              const isSaved = savedLocations.some(
+                (s) => s.latitude === loc.latitude && s.longitude === loc.longitude
+              );
+              return (
+                <Box key={`result-${i}`} gap={1}>
+                  <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
+                    {isSelected ? '> ' : '  '}{loc.name}
+                  </Text>
+                  {isSelected && onSave && !isSaved && (
+                    <Text dimColor> [s] save</Text>
+                  )}
+                  {isSaved && <Text color="green"> ✓ saved</Text>}
+                </Box>
+              );
+            })}
           </Box>
         </Box>
       )}
@@ -100,6 +174,17 @@ export function Search({ onSelect, onCancel }: SearchProps) {
       {query.length >= 2 && !loading && results.length === 0 && (
         <Box marginTop={1}>
           <Text dimColor>No locations found</Text>
+        </Box>
+      )}
+
+      {/* Help text */}
+      {allItems.length > 0 && (
+        <Box marginTop={1}>
+          <Text dimColor>
+            ↑/↓ navigate · Enter select · Esc cancel
+            {onSave && ' · [s] save'}
+            {onDelete && ' · [d] delete'}
+          </Text>
         </Box>
       )}
     </Box>

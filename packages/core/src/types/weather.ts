@@ -55,6 +55,9 @@ export interface CurrentWeather {
   condition: WeatherCondition
   isDay: boolean
   precipitation?: number
+  dewPoint?: number
+  snowfall?: number
+  precipitationType?: 'rain' | 'snow' | 'mixed' | 'none'
 }
 
 /**
@@ -91,6 +94,11 @@ export interface HourlyForecast {
   windSpeed: number
   windDirection: WindDirection
   isDay: boolean
+  dewPoint?: number
+  windGusts?: number
+  snowfall?: number
+  rain?: number
+  precipitationType?: 'rain' | 'snow' | 'mixed' | 'none'
 }
 
 /**

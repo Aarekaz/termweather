@@ -36,6 +36,7 @@ export interface OpenMeteoCurrent {
   wind_speed_10m: number
   wind_direction_10m: number
   wind_gusts_10m: number
+  dewpoint_2m: number
   uv_index?: number
   visibility?: number
 }
@@ -52,6 +53,10 @@ export interface OpenMeteoHourly {
   wind_direction_10m: number[]
   surface_pressure?: number[]
   is_day: number[]
+  dewpoint_2m?: number[]
+  wind_gusts_10m?: number[]
+  snowfall?: number[]
+  rain?: number[]
 }
 
 export interface OpenMeteoDaily {

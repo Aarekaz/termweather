@@ -58,5 +58,13 @@ export {
   aqiToPercent,
 } from './utils/calculations'
 
+// Utilities - Precipitation
+export {
+  findNextPrecipitation,
+  calculatePrecipitationAccumulation,
+  calculateWeeklyPrecipitation,
+  formatPrecipitationAlert,
+} from './utils/precipitation'
+
 // Cache
 export { WeatherCache } from './cache'

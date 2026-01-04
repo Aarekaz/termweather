@@ -3,6 +3,10 @@ import { Box, Text, useInput } from 'ink';
 import type { WeatherData } from '@weather/core';
 import { formatTemperature } from '@weather/core';
 import { getConditionEmoji, getTempColor } from '../utils/terminal.js';
+import { Sparkline } from './visualizations/Sparkline.js';
+import { TemperatureRangeBar } from './visualizations/TemperatureRangeBar.js';
+import { useTerminalSize } from '../hooks/useTerminalSize.js';
+import { BORDER_HEAVY } from '../utils/theme.js';
 
 interface ForecastProps {
   data: WeatherData | null;
@@ -85,9 +89,28 @@ function HourlyForecast({ data }: { data: WeatherData }) {
 }
 
 function DailyForecast({ data }: { data: WeatherData }) {
+  const { breakpoint } = useTerminalSize();
+
+  // Extract data for sparklines
+  const highTemps = data.daily.map((d) => d.temperatureMax);
+  const lowTemps = data.daily.map((d) => d.temperatureMin);
+  const precipProbs = data.daily.map((d) => d.precipitationProbability);
+  const uvIndexes = data.daily.map((d) => d.uvIndexMax || 0);
+
+  // Show enhanced view on medium+ screens
+  const showSparklines = breakpoint !== 'tiny' && breakpoint !== 'small';
+
   return (
-    <Box flexDirection="column">
-      <Text bold>7-Day Forecast</Text>
+    <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={2} paddingY={0}>
+      {/* Title */}
+      <Box marginBottom={0}>
+        <Text bold color="cyan">
+          {BORDER_HEAVY.horizontal.repeat(2)} 7-DAY FORECAST{' '}
+          {BORDER_HEAVY.horizontal.repeat(2)}
+        </Text>
+      </Box>
+
+      {/* Day-by-day forecast */}
       <Box flexDirection="column" marginTop={1}>
         {data.daily.map((day, index) => {
           const date = new Date(day.date);
@@ -101,18 +124,111 @@ function DailyForecast({ data }: { data: WeatherData }) {
           const low = formatTemperature(day.temperatureMin, 'C');
 
           return (
-            <Box key={index} gap={2}>
-              <Text>{dayName}</Text>
-              <Text dimColor>{dateStr.padEnd(7)}</Text>
-              <Text>{emoji}</Text>
-              <Text color="red">{high.padStart(6)}</Text>
-              <Text dimColor>/</Text>
-              <Text color="blue">{low.padStart(6)}</Text>
-              <Text dimColor>Precip: {day.precipitationProbability}%</Text>
+            <Box key={index} gap={2} flexDirection="column">
+              <Box gap={2}>
+                <Box width={10}>
+                  <Text>{dayName}</Text>
+                  <Text dimColor> {dateStr}</Text>
+                </Box>
+                <Text>{emoji}</Text>
+                <Box gap={1}>
+                  <Text color="red">{high}</Text>
+                  <Text dimColor>/</Text>
+                  <Text color="cyan">{low}</Text>
+                </Box>
+                <Box gap={1}>
+                  <Text dimColor>Rain:</Text>
+                  <Text color="blue">{day.precipitationProbability}%</Text>
+                </Box>
+                {day.uvIndexMax && day.uvIndexMax > 0 && (
+                  <Box gap={1}>
+                    <Text dimColor>UV:</Text>
+                    <Text color="yellow">{day.uvIndexMax}</Text>
+                  </Box>
+                )}
+                {day.windSpeedMax && (
+                  <Box gap={1}>
+                    <Text dimColor>Wind:</Text>
+                    <Text>{Math.round(day.windSpeedMax)} km/h</Text>
+                  </Box>
+                )}
+              </Box>
+              {/* Temperature Range Bar */}
+              <Box marginLeft={12}>
+                <TemperatureRangeBar
+                  min={day.temperatureMin}
+                  max={day.temperatureMax}
+                  width={30}
+                />
+              </Box>
             </Box>
           );
         })}
       </Box>
+
+      {/* Weekly trends (sparklines) */}
+      {showSparklines && (
+        <Box flexDirection="column" marginTop={2} borderTop borderColor="gray">
+          <Box marginTop={1}>
+            <Text bold color="yellow">Weekly Trends</Text>
+          </Box>
+
+          {/* Temperature trends */}
+          <Box flexDirection="column" marginTop={1}>
+            <Box gap={2}>
+              <Box width={12}>
+                <Text dimColor>High Temps</Text>
+              </Box>
+              <Sparkline data={highTemps} width={28} color="red" />
+              <Box gap={1}>
+                <Text color="red">{Math.round(Math.max(...highTemps))}°</Text>
+                <Text dimColor>max</Text>
+              </Box>
+            </Box>
+
+            <Box gap={2} marginTop={0}>
+              <Box width={12}>
+                <Text dimColor>Low Temps</Text>
+              </Box>
+              <Sparkline data={lowTemps} width={28} color="cyan" />
+              <Box gap={1}>
+                <Text color="cyan">{Math.round(Math.min(...lowTemps))}°</Text>
+                <Text dimColor>min</Text>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Precipitation trend */}
+          <Box flexDirection="column" marginTop={1}>
+            <Box gap={2}>
+              <Box width={12}>
+                <Text dimColor>Rain Chance</Text>
+              </Box>
+              <Sparkline data={precipProbs} width={28} color="blue" />
+              <Box gap={1}>
+                <Text color="blue">{Math.round(Math.max(...precipProbs))}%</Text>
+                <Text dimColor>max</Text>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* UV Index trend */}
+          {uvIndexes.some(uv => uv > 0) && (
+            <Box flexDirection="column" marginTop={1}>
+              <Box gap={2}>
+                <Box width={12}>
+                  <Text dimColor>UV Index</Text>
+                </Box>
+                <Sparkline data={uvIndexes} width={28} color="magenta" />
+                <Box gap={1}>
+                  <Text color="magenta">{Math.round(Math.max(...uvIndexes))}</Text>
+                  <Text dimColor>max</Text>
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      )}
     </Box>
   );
 }

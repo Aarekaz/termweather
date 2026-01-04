@@ -168,6 +168,8 @@ export class WeatherClient {
       'wind_speed_10m',
       'wind_direction_10m',
       'wind_gusts_10m',
+      'dewpoint_2m',
+      'snowfall',
     ].join(',')
 
     const hourlyParams = [
@@ -181,6 +183,10 @@ export class WeatherClient {
       'wind_direction_10m',
       'surface_pressure',
       'is_day',
+      'dewpoint_2m',
+      'wind_gusts_10m',
+      'snowfall',
+      'rain',
     ].join(',')
 
     const dailyParams = [
@@ -267,6 +273,13 @@ export class WeatherClient {
       condition: getConditionFromCode(current.weather_code),
       isDay: current.is_day === 1,
       precipitation: current.precipitation,
+      dewPoint: current.dewpoint_2m,
+      snowfall: current.snowfall,
+      precipitationType: this.determinePrecipType(
+        current.rain ?? 0,
+        current.snowfall ?? 0,
+        current.precipitation ?? 0
+      ),
     }
 
     const sunTimes: SunTimes = {
@@ -296,6 +309,15 @@ export class WeatherClient {
       windSpeed: hourly.wind_speed_10m[i],
       windDirection: degreesToWindDirection(hourly.wind_direction_10m[i]),
       isDay: hourly.is_day[i] === 1,
+      dewPoint: hourly.dewpoint_2m?.[i],
+      windGusts: hourly.wind_gusts_10m?.[i],
+      snowfall: hourly.snowfall?.[i],
+      rain: hourly.rain?.[i],
+      precipitationType: this.determinePrecipType(
+        hourly.rain?.[i] ?? 0,
+        hourly.snowfall?.[i] ?? 0,
+        hourly.precipitation[i]
+      ),
     }))
 
     const dailyForecasts: DailyForecast[] = daily.time.map((time, i) => ({
@@ -332,6 +354,21 @@ export class WeatherClient {
       lastUpdated: new Date(),
       timezone: forecast.timezone,
     }
+  }
+
+  /**
+   * Determine precipitation type based on rain and snow amounts
+   */
+  private determinePrecipType(
+    rain: number,
+    snow: number,
+    total: number
+  ): 'rain' | 'snow' | 'mixed' | 'none' {
+    if (total === 0) return 'none'
+    if (rain > 0 && snow > 0) return 'mixed'
+    if (snow > 0) return 'snow'
+    if (rain > 0) return 'rain'
+    return 'none'
   }
 
   /**
