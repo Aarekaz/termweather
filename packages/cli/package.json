@@ -1,6 +1,6 @@
 {
   "name": "termweather",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Beautiful weather in your terminal - CLI commands + interactive TUI dashboard",
   "type": "module",
   "bin": {
