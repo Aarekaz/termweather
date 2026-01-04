@@ -10,7 +10,24 @@ Beautiful weather in your terminal - CLI commands + interactive TUI dashboard.
          5°C  ☀️ Clear
          Feels like 2°C
 
-  Sunrise: 7:20 AM    Sunset: 4:38 PM    Daylight: 9h 18m
+  ══ HOURLY FORECAST ══
+  1   2   3   4   5   6   7   8
+  ☀️  ☀️  🌤  ⛅  ⛅  🌧  🌧  ☁️
+  5°  4°  3°  2°  2°  1°  1°  0°
+
+  ══ NEXT PRECIPITATION ══
+  ⚠️ Rain in 2 hours
+  Probability: 65% | Expected: 2.5 mm
+
+  ══ PRECIPITATION ══
+  Next 24 Hours: 🌧 2.5 mm total
+  Next 7 Days: 12.3 mm total | Avg: 1.8 mm/day
+
+  ══ SUN & MOON ══          ══ ATMOSPHERIC ══
+  Sunrise  ↑ 7:20 AM        Visibility  10 km Excellent
+  [Sun Arc]                 Cloud Cover 45% Partly cloudy
+  Sunset   ↓ 4:38 PM        Dewpoint   2°C  High humidity
+  🌗 Waning (72%)           Pressure   1013 mb ↑ Rising
 
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │ [d] Dashboard [f] Forecast [/] Search [q] Quit                               │
@@ -22,6 +39,59 @@ Beautiful weather in your terminal - CLI commands + interactive TUI dashboard.
 ```bash
 npm install -g termweather
 ```
+
+## v3.2.0 Features ✨
+
+The TUI dashboard now includes enhanced features to bring it closer to Apple Weather:
+
+### Dashboard Layout
+
+The interactive dashboard has been redesigned with a 4-tier responsive layout:
+
+1. **Unified Header** (always visible)
+   - Location name with multi-location navigation
+   - Current temperature + weather condition
+   - Wind speed + direction + humidity
+   - Pressure with trend indicator
+   - UV Index + Air Quality
+
+2. **Hourly Forecast** (always visible, enhanced)
+   - Temperature sparkline with range
+   - Feels-like temperature sparkline
+   - Precipitation probability sparkline
+   - **NEW:** Wind gust sparkline (shows peak gusts)
+   - **NEW:** Precipitation type emoji (🌧 rain, ❄️ snow, 🌨 mixed)
+
+3. **Precipitation Row** (medium+ screens)
+   - **Next Precipitation Alert**: "Rain in X hours" with probability
+   - **Precipitation Summary**: 24-hour and 7-day accumulation with rain/snow breakdown
+
+4. **Atmospheric Section** (medium+ screens, enhanced)
+   - Sun & Moon times with sun arc visualization
+   - **NEW:** Moon phase with illumination percentage
+   - Visibility rating + cloud cover
+   - **NEW:** Cloud cover description + color-coded progress
+   - Dew point with humidity interpretation
+   - Pressure with trend indicator
+
+### New Forecast Features
+
+In the 7-day forecast view:
+- **NEW:** Temperature range bars showing min/max for each day
+- Visual gradient from cool (blue) to warm (red) temperatures
+- Color-coded by temperature zones
+
+### What's New (8 Enhancements)
+
+**Next Precipitation Alert** - Know when rain/snow is coming
+**Precipitation Accumulation** - 24hr and 7-day totals with rain/snow breakdown
+**Temperature Range Bars** - Visual daily temperature ranges
+**Wind Gusts Display** - Prominent gust indicators in hourly forecast
+**Dew Point** - Fetched from API (atmospheric moisture indicator)
+**Cloud Cover Enhancement** - Descriptive text + color-coded progress
+**Precipitation Type Detection** - Rain vs snow identification with emojis
+**Moon Illumination %** - Shows lunar phase percentage
+
 
 ## Usage
 
