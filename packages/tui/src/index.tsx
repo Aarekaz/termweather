@@ -4,7 +4,12 @@ import { Dashboard } from './components/Dashboard.js';
 import { Forecast } from './components/Forecast.js';
 import { Search } from './components/Search.js';
 import { StatusBar } from './components/StatusBar.js';
+import { HelpModal } from './components/overlays/HelpModal.js';
+import { TabBar } from './components/navigation/TabBar.js';
+import { TinyScreenWarning } from './components/TinyScreenWarning.js';
 import { useWeatherData } from './hooks/useWeatherData.js';
+import { useTerminalSize } from './hooks/useTerminalSize.js';
+import { getNextTab, getPreviousTab, getTabByNumber } from './config/tabs.js';
 
 type View = 'dashboard' | 'forecast' | 'search';
 
@@ -26,7 +31,9 @@ function App() {
   const [locations, setLocations] = useState<Location[]>(DEFAULT_LOCATIONS);
   const [currentLocationIndex, setCurrentLocationIndex] = useState(0);
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
 
+  const { breakpoint } = useTerminalSize();
   const currentLocation = locations[currentLocationIndex];
 
   const { data, loading, error, lastUpdated, refetch } = useWeatherData(
@@ -40,6 +47,42 @@ function App() {
 
   // Handle keyboard input
   useInput((input, key) => {
+    // Help modal toggle (works in all views)
+    if (input === '?') {
+      setShowHelp((prev) => !prev);
+      return;
+    }
+
+    // Close help modal with ESC
+    if (key.escape && showHelp) {
+      setShowHelp(false);
+      return;
+    }
+
+    // Tab navigation (skip in search view to allow text input)
+    if (view !== 'search') {
+      // Tab: next view
+      if (key.tab && !key.shift) {
+        setView(getNextTab(view));
+        return;
+      }
+
+      // Shift+Tab: previous view
+      if (key.tab && key.shift) {
+        setView(getPreviousTab(view));
+        return;
+      }
+
+      // Number shortcuts (1-3) for direct navigation
+      if (['1', '2', '3'].includes(input)) {
+        const targetView = getTabByNumber(input);
+        if (targetView) {
+          setView(targetView);
+          return;
+        }
+      }
+    }
+
     // Special handling for search view
     if (view === 'search') {
       if (key.ctrl && input === 'c') {
@@ -48,7 +91,7 @@ function App() {
       return;
     }
 
-    // Global navigation
+    // Global navigation (keep legacy shortcuts for backward compatibility)
     if (input === 'q') {
       exit();
     }
@@ -102,8 +145,20 @@ function App() {
     setView('dashboard');
   };
 
+  // Show warning on tiny screens
+  if (breakpoint === 'tiny') {
+    return (
+      <Box flexDirection="column" width="100%" height="100%">
+        <TinyScreenWarning />
+      </Box>
+    );
+  }
+
   return (
     <Box flexDirection="column" width="100%">
+      {/* Tab Navigation Bar */}
+      <TabBar currentView={view} onTabChange={setView} breakpoint={breakpoint} />
+
       {/* Main Content - Dashboard now includes header */}
       <Box flexGrow={1} minHeight={20}>
         {error && view !== 'search' ? (
@@ -134,7 +189,15 @@ function App() {
       </Box>
 
       {/* Status Bar */}
-      <StatusBar view={view} lastUpdated={lastUpdated} loading={loading} />
+      <StatusBar view={view} lastUpdated={lastUpdated} loading={loading} breakpoint={breakpoint} />
+
+      {/* Help Modal */}
+      <HelpModal
+        visible={showHelp}
+        onClose={() => setShowHelp(false)}
+        currentView={view}
+        breakpoint={breakpoint}
+      />
     </Box>
   );
 }

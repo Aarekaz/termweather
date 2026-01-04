@@ -40,8 +40,14 @@ export function StationLayout({
   const { breakpoint } = useTerminalSize();
 
   // Determine how many hours to show based on terminal size
-  const hoursToShow =
-    breakpoint === 'small' ? 8 : breakpoint === 'medium' ? 10 : 14;
+  const hoursToShow: Record<string, number> = {
+    tiny: 6,
+    small: 8,
+    medium: 10,
+    large: 14,
+    xlarge: 18,
+  };
+  const hours = hoursToShow[breakpoint] || 10;
 
   return (
     <Box flexDirection="column" gap={0} paddingX={1} paddingY={0}>
@@ -66,11 +72,11 @@ export function StationLayout({
 
       {/* Hourly Forecast - Enhanced with Feels Like + Wind sparklines */}
       <Box marginTop={0}>
-        <HourlyForecastPanel hourly={data.hourly} hours={hoursToShow} />
+        <HourlyForecastPanel hourly={data.hourly} hours={hours} />
       </Box>
 
       {/* Enhanced Bottom Section - NEW (replaces BottomSection) */}
-      {breakpoint !== 'small' && (
+      {breakpoint !== 'small' && breakpoint !== 'tiny' && (
         <Box marginTop={0}>
           <EnhancedBottomSection
             sunTimes={data.sunTimes}

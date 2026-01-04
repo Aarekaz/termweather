@@ -5,12 +5,15 @@ import { getConditionEmoji, getTempColor } from '../../utils/terminal.js';
 import { BORDER_HEAVY } from '../../utils/theme.js';
 import { Sparkline } from '../visualizations/Sparkline.js';
 import { WindSparkline } from '../visualizations/WindSparkline.js';
+import { getFocusBorderProps } from '../../utils/focus.js';
 
 interface HourlyForecastPanelProps {
   /** Hourly forecast data */
   hourly: HourlyForecast[];
   /** Number of hours to display */
   hours?: number;
+  /** Whether this panel currently has focus (for future interactive navigation) */
+  isFocused?: boolean;
 }
 
 /**
@@ -20,6 +23,7 @@ interface HourlyForecastPanelProps {
 export function HourlyForecastPanel({
   hourly,
   hours = 8,
+  isFocused = false,
 }: HourlyForecastPanelProps) {
   const forecastData = hourly.slice(0, hours);
 
@@ -29,11 +33,13 @@ export function HourlyForecastPanel({
   const feelsLikeData = forecastData.map((h) => h.feelsLike);
   const windSpeedData = forecastData.map((h) => h.windSpeed);
 
+  // Get border styling based on focus state (infrastructure for future panel navigation)
+  const borderProps = getFocusBorderProps(isFocused);
+
   return (
     <Box
       flexDirection="column"
-      borderStyle="round"
-      borderColor="cyan"
+      {...borderProps}
       paddingX={2}
       paddingY={0}
     >
@@ -74,25 +80,63 @@ export function HourlyForecastPanel({
       <Box flexDirection="row" gap={4} marginTop={1}>
         {/* Left column: Temperature sparklines */}
         <Box flexDirection="column" flexGrow={1}>
-          <Box gap={2}>
-            <Text dimColor>Temp</Text>
-            <Sparkline data={tempData} width={hours * 4} color="yellow" />
+          {/* Temperature sparkline with range */}
+          <Box flexDirection="column">
+            <Box gap={2}>
+              <Text dimColor>Temp</Text>
+              <Sparkline data={tempData} width={hours * 4} color="yellow" />
+            </Box>
+            <Box gap={1} marginTop={0}>
+              <Text dimColor>Range:</Text>
+              <Text color="cyan">
+                {Math.round(Math.min(...tempData))}° to{' '}
+                {Math.round(Math.max(...tempData))}°
+              </Text>
+            </Box>
           </Box>
-          <Box gap={2} marginTop={0}>
-            <Text dimColor>Rain</Text>
-            <Sparkline data={precipData} width={hours * 4} color="blue" />
+
+          {/* Rain sparkline with max probability */}
+          <Box flexDirection="column" marginTop={1}>
+            <Box gap={2}>
+              <Text dimColor>Rain</Text>
+              <Sparkline data={precipData} width={hours * 4} color="blue" />
+            </Box>
+            <Box gap={1} marginTop={0}>
+              <Text dimColor>Max:</Text>
+              <Text color="blue">{Math.round(Math.max(...precipData))}%</Text>
+            </Box>
           </Box>
         </Box>
 
         {/* Right column: Feels Like + Wind */}
         <Box flexDirection="column" flexGrow={1}>
-          <Box gap={2}>
-            <Text dimColor>Feel</Text>
-            <Sparkline data={feelsLikeData} width={hours * 4} color="cyan" />
+          {/* Feels Like sparkline with range */}
+          <Box flexDirection="column">
+            <Box gap={2}>
+              <Text dimColor>Feel</Text>
+              <Sparkline data={feelsLikeData} width={hours * 4} color="cyan" />
+            </Box>
+            <Box gap={1} marginTop={0}>
+              <Text dimColor>Range:</Text>
+              <Text color="cyan">
+                {Math.round(Math.min(...feelsLikeData))}° to{' '}
+                {Math.round(Math.max(...feelsLikeData))}°
+              </Text>
+            </Box>
           </Box>
-          <Box gap={2} marginTop={0}>
-            <Text dimColor>Wind</Text>
-            <WindSparkline data={windSpeedData} width={hours * 4} />
+
+          {/* Wind sparkline with max speed */}
+          <Box flexDirection="column" marginTop={1}>
+            <Box gap={2}>
+              <Text dimColor>Wind</Text>
+              <WindSparkline data={windSpeedData} width={hours * 4} />
+            </Box>
+            <Box gap={1} marginTop={0}>
+              <Text dimColor>Max:</Text>
+              <Text color="gray">
+                {Math.round(Math.max(...windSpeedData))} km/h
+              </Text>
+            </Box>
           </Box>
         </Box>
       </Box>
