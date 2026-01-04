@@ -31,6 +31,7 @@ export function HelpModal({ visible, onClose, currentView, breakpoint }: HelpMod
     { key: 'Tab', description: 'Next view' },
     { key: 'Shift+Tab', description: 'Previous view' },
     { key: '1-3', description: 'Jump to specific view' },
+    { key: '/', description: 'Open search/Add location' },
     { key: '←/→', description: 'Switch location (Dashboard)' },
   ];
 
@@ -50,8 +51,10 @@ export function HelpModal({ visible, onClose, currentView, breakpoint }: HelpMod
       { key: 'w', description: 'Show weekly forecast' },
     ],
     search: [
-      { key: '↑/↓', description: 'Navigate search results' },
+      { key: '↑/↓', description: 'Navigate results' },
       { key: 'Enter', description: 'Select location' },
+      { key: 's', description: 'Save location' },
+      { key: 'd', description: 'Delete saved location' },
       { key: 'Esc', description: 'Cancel search' },
     ],
   };
