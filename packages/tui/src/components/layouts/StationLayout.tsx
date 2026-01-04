@@ -4,6 +4,8 @@ import type { WeatherData } from '@weather/core';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 import { UnifiedHeader } from './UnifiedHeader.js';
 import { HourlyForecastPanel } from '../panels/HourlyForecastPanel.js';
+import { PrecipitationAlertPanel } from '../panels/PrecipitationAlertPanel.js';
+import { PrecipitationSummaryPanel } from '../panels/PrecipitationSummaryPanel.js';
 import { EnhancedBottomSection } from './EnhancedBottomSection.js';
 
 interface StationLayoutProps {
@@ -74,6 +76,14 @@ export function StationLayout({
       <Box marginTop={0}>
         <HourlyForecastPanel hourly={data.hourly} hours={hours} />
       </Box>
+
+      {/* Precipitation Row - NEW (medium+ only) */}
+      {breakpoint !== 'small' && breakpoint !== 'tiny' && (
+        <Box marginTop={0} gap={1}>
+          <PrecipitationAlertPanel hourly={data.hourly} />
+          <PrecipitationSummaryPanel hourly={data.hourly} daily={data.daily} />
+        </Box>
+      )}
 
       {/* Enhanced Bottom Section - NEW (replaces BottomSection) */}
       {breakpoint !== 'small' && breakpoint !== 'tiny' && (

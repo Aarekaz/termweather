@@ -10,6 +10,7 @@ import {
   getVisibilityRating,
   getPressureDescription,
   createProgressBar,
+  getCloudCoverDescription,
 } from '../../utils/atmosphere.js';
 import { SYMBOLS } from '../../utils/symbols.js';
 
@@ -49,6 +50,8 @@ export function EnhancedBottomSection(props: EnhancedBottomSectionProps) {
       : props.pressureTrend === 'falling'
       ? 'red'
       : 'gray';
+
+  const cloudCoverInfo = getCloudCoverDescription(props.cloudCover);
 
   return (
     <Box gap={1}>
@@ -112,13 +115,18 @@ export function EnhancedBottomSection(props: EnhancedBottomSectionProps) {
           <Text color="green">{getVisibilityRating(props.visibility)}</Text>
         </Box>
 
-        {/* Cloud Cover with progress bar */}
+        {/* Cloud Cover with progress bar and description */}
         <Box justifyContent="space-between" marginTop={0}>
           <Box gap={2}>
             <Text dimColor>Cloud Cover</Text>
             <Text>{props.cloudCover}%</Text>
           </Box>
-          <Text color="gray">{createProgressBar(props.cloudCover, 100, 12)}</Text>
+          <Box gap={1}>
+            <Text color={cloudCoverInfo.color}>
+              {createProgressBar(props.cloudCover, 100, 8)}
+            </Text>
+            <Text color={cloudCoverInfo.color}>{cloudCoverInfo.description}</Text>
+          </Box>
         </Box>
 
         {/* AQI */}

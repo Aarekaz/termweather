@@ -27,15 +27,16 @@ export function MoonPhase({ date = new Date() }: MoonPhaseProps) {
 
 /**
  * Compact moon phase display
- * Shows only emoji and phase name
+ * Shows emoji, phase name, and illumination percentage
  */
 export function MoonPhaseCompact({ date = new Date() }: MoonPhaseProps) {
-  const { emoji, name } = getMoonPhase(date);
+  const { emoji, name, illumination } = getMoonPhase(date);
 
   return (
     <Box gap={1}>
       <Text>{emoji}</Text>
       <Text dimColor>{name}</Text>
+      <Text dimColor>({illumination}%)</Text>
     </Box>
   );
 }

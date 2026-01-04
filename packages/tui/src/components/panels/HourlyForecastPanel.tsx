@@ -6,6 +6,7 @@ import { BORDER_HEAVY } from '../../utils/theme.js';
 import { Sparkline } from '../visualizations/Sparkline.js';
 import { WindSparkline } from '../visualizations/WindSparkline.js';
 import { getFocusBorderProps } from '../../utils/focus.js';
+import { getPrecipTypeEmoji } from '../../utils/atmosphere.js';
 
 interface HourlyForecastPanelProps {
   /** Hourly forecast data */
@@ -32,6 +33,7 @@ export function HourlyForecastPanel({
   const precipData = forecastData.map((h) => h.precipitationProbability);
   const feelsLikeData = forecastData.map((h) => h.feelsLike);
   const windSpeedData = forecastData.map((h) => h.windSpeed);
+  const windGustData = forecastData.map((h) => h.windGusts ?? h.windSpeed);
 
   // Get border styling based on focus state (infrastructure for future panel navigation)
   const borderProps = getFocusBorderProps(isFocused);
@@ -59,6 +61,10 @@ export function HourlyForecastPanel({
           });
           const shortTime = time.replace(' AM', '').replace(' PM', '');
 
+          const precipEmoji = hour.precipitationType
+            ? getPrecipTypeEmoji(hour.precipitationType)
+            : '';
+
           return (
             <Box
               key={index}
@@ -68,6 +74,7 @@ export function HourlyForecastPanel({
             >
               <Text dimColor>{shortTime}</Text>
               <Text>{getConditionEmoji(hour.condition)}</Text>
+              {precipEmoji && <Text>{precipEmoji}</Text>}
               <Text color={getTempColor(hour.temperature)}>
                 {Math.round(hour.temperature)}°
               </Text>
@@ -135,6 +142,20 @@ export function HourlyForecastPanel({
               <Text dimColor>Max:</Text>
               <Text color="gray">
                 {Math.round(Math.max(...windSpeedData))} km/h
+              </Text>
+            </Box>
+          </Box>
+
+          {/* Wind Gusts sparkline - NEW */}
+          <Box flexDirection="column" marginTop={1}>
+            <Box gap={2}>
+              <Text dimColor>Gust</Text>
+              <Sparkline data={windGustData} width={hours * 4} color="magenta" />
+            </Box>
+            <Box gap={1} marginTop={0}>
+              <Text dimColor>Max:</Text>
+              <Text color="magenta">
+                {Math.round(Math.max(...windGustData))} km/h
               </Text>
             </Box>
           </Box>

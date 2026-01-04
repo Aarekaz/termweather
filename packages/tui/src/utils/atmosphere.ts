@@ -57,3 +57,30 @@ export function createProgressBar(
   const empty = width - filled;
   return '█'.repeat(filled) + '░'.repeat(empty);
 }
+
+/**
+ * Get cloud cover description and color based on percentage
+ */
+export function getCloudCoverDescription(percent: number): {
+  description: string
+  color: string
+} {
+  if (percent < 10) return { description: 'Clear skies', color: 'cyan' }
+  if (percent < 25) return { description: 'Mostly clear', color: 'blue' }
+  if (percent < 50) return { description: 'Partly cloudy', color: 'gray' }
+  if (percent < 75) return { description: 'Mostly cloudy', color: 'gray' }
+  return { description: 'Overcast', color: 'white' }
+}
+
+/**
+ * Get emoji for precipitation type
+ */
+export function getPrecipTypeEmoji(type: string): string {
+  const emojis: Record<string, string> = {
+    rain: '🌧',
+    snow: '❄️',
+    mixed: '🌨',
+    none: '',
+  }
+  return emojis[type] || ''
+}

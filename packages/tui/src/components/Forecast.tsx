@@ -4,6 +4,7 @@ import type { WeatherData } from '@weather/core';
 import { formatTemperature } from '@weather/core';
 import { getConditionEmoji, getTempColor } from '../utils/terminal.js';
 import { Sparkline } from './visualizations/Sparkline.js';
+import { TemperatureRangeBar } from './visualizations/TemperatureRangeBar.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { BORDER_HEAVY } from '../utils/theme.js';
 
@@ -123,33 +124,43 @@ function DailyForecast({ data }: { data: WeatherData }) {
           const low = formatTemperature(day.temperatureMin, 'C');
 
           return (
-            <Box key={index} gap={2}>
-              <Box width={10}>
-                <Text>{dayName}</Text>
-                <Text dimColor> {dateStr}</Text>
-              </Box>
-              <Text>{emoji}</Text>
-              <Box gap={1}>
-                <Text color="red">{high}</Text>
-                <Text dimColor>/</Text>
-                <Text color="cyan">{low}</Text>
-              </Box>
-              <Box gap={1}>
-                <Text dimColor>Rain:</Text>
-                <Text color="blue">{day.precipitationProbability}%</Text>
-              </Box>
-              {day.uvIndexMax && day.uvIndexMax > 0 && (
-                <Box gap={1}>
-                  <Text dimColor>UV:</Text>
-                  <Text color="yellow">{day.uvIndexMax}</Text>
+            <Box key={index} gap={2} flexDirection="column">
+              <Box gap={2}>
+                <Box width={10}>
+                  <Text>{dayName}</Text>
+                  <Text dimColor> {dateStr}</Text>
                 </Box>
-              )}
-              {day.windSpeedMax && (
+                <Text>{emoji}</Text>
                 <Box gap={1}>
-                  <Text dimColor>Wind:</Text>
-                  <Text>{Math.round(day.windSpeedMax)} km/h</Text>
+                  <Text color="red">{high}</Text>
+                  <Text dimColor>/</Text>
+                  <Text color="cyan">{low}</Text>
                 </Box>
-              )}
+                <Box gap={1}>
+                  <Text dimColor>Rain:</Text>
+                  <Text color="blue">{day.precipitationProbability}%</Text>
+                </Box>
+                {day.uvIndexMax && day.uvIndexMax > 0 && (
+                  <Box gap={1}>
+                    <Text dimColor>UV:</Text>
+                    <Text color="yellow">{day.uvIndexMax}</Text>
+                  </Box>
+                )}
+                {day.windSpeedMax && (
+                  <Box gap={1}>
+                    <Text dimColor>Wind:</Text>
+                    <Text>{Math.round(day.windSpeedMax)} km/h</Text>
+                  </Box>
+                )}
+              </Box>
+              {/* Temperature Range Bar */}
+              <Box marginLeft={12}>
+                <TemperatureRangeBar
+                  min={day.temperatureMin}
+                  max={day.temperatureMax}
+                  width={30}
+                />
+              </Box>
             </Box>
           );
         })}
