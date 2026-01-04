@@ -54,11 +54,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Aarekaz/Weather-Site.git"
+    "url": "git+https://github.com/Aarekaz/termweather.git"
   },
-  "homepage": "https://github.com/Aarekaz/Weather-Site#readme",
+  "homepage": "https://github.com/Aarekaz/termweather#readme",
   "bugs": {
-    "url": "https://github.com/Aarekaz/Weather-Site/issues"
+    "url": "https://github.com/Aarekaz/termweather/issues"
   },
   "engines": {
     "node": ">=18"
