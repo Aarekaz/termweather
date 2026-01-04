@@ -40,7 +40,7 @@ Beautiful weather in your terminal - CLI commands + interactive TUI dashboard.
 npm install -g termweather
 ```
 
-## v3.2.0 Features ✨
+## v3.3.0 Features ✨
 
 The TUI dashboard now includes enhanced features to bring it closer to Apple Weather:
 
