@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import type { HourlyForecast } from '@weather/core';
 import { getConditionEmoji, getTempColor } from '../../utils/terminal.js';
-import { BORDER_HEAVY } from '../../utils/theme.js';
+import { BORDER_HEAVY, SEMANTIC_COLORS } from '../../utils/theme.js';
 import { Sparkline } from '../visualizations/Sparkline.js';
 import { WindSparkline } from '../visualizations/WindSparkline.js';
 import { getFocusBorderProps } from '../../utils/focus.js';
@@ -46,8 +46,13 @@ export function HourlyForecastPanel({
       paddingY={0}
     >
       {/* Title */}
-      <Box marginBottom={0}>
-        <Text bold color="cyan">
+      <Box
+        marginBottom={0}
+        paddingX={1}
+        width="100%"
+        backgroundColor={SEMANTIC_COLORS.band.background}
+      >
+        <Text bold color={SEMANTIC_COLORS.band.text}>
           {BORDER_HEAVY.horizontal.repeat(2)} HOURLY FORECAST{' '}
           {BORDER_HEAVY.horizontal.repeat(2)}
         </Text>
@@ -91,11 +96,15 @@ export function HourlyForecastPanel({
           <Box flexDirection="column">
             <Box gap={2}>
               <Text dimColor>Temp</Text>
-              <Sparkline data={tempData} width={hours * 4} color="yellow" />
+              <Sparkline
+                data={tempData}
+                width={hours * 4}
+                color={SEMANTIC_COLORS.temperature.warm}
+              />
             </Box>
             <Box gap={1} marginTop={0}>
               <Text dimColor>Range:</Text>
-              <Text color="cyan">
+              <Text color={SEMANTIC_COLORS.temperature.neutral}>
                 {Math.round(Math.min(...tempData))}° to{' '}
                 {Math.round(Math.max(...tempData))}°
               </Text>
@@ -106,11 +115,17 @@ export function HourlyForecastPanel({
           <Box flexDirection="column" marginTop={1}>
             <Box gap={2}>
               <Text dimColor>Rain</Text>
-              <Sparkline data={precipData} width={hours * 4} color="blue" />
+              <Sparkline
+                data={precipData}
+                width={hours * 4}
+                color={SEMANTIC_COLORS.alert.info}
+              />
             </Box>
             <Box gap={1} marginTop={0}>
               <Text dimColor>Max:</Text>
-              <Text color="blue">{Math.round(Math.max(...precipData))}%</Text>
+              <Text color={SEMANTIC_COLORS.alert.info}>
+                {Math.round(Math.max(...precipData))}%
+              </Text>
             </Box>
           </Box>
         </Box>
@@ -121,11 +136,15 @@ export function HourlyForecastPanel({
           <Box flexDirection="column">
             <Box gap={2}>
               <Text dimColor>Feel</Text>
-              <Sparkline data={feelsLikeData} width={hours * 4} color="cyan" />
+              <Sparkline
+                data={feelsLikeData}
+                width={hours * 4}
+                color={SEMANTIC_COLORS.temperature.neutral}
+              />
             </Box>
             <Box gap={1} marginTop={0}>
               <Text dimColor>Range:</Text>
-              <Text color="cyan">
+              <Text color={SEMANTIC_COLORS.temperature.neutral}>
                 {Math.round(Math.min(...feelsLikeData))}° to{' '}
                 {Math.round(Math.max(...feelsLikeData))}°
               </Text>
@@ -150,11 +169,15 @@ export function HourlyForecastPanel({
           <Box flexDirection="column" marginTop={1}>
             <Box gap={2}>
               <Text dimColor>Gust</Text>
-              <Sparkline data={windGustData} width={hours * 4} color="magenta" />
+              <Sparkline
+                data={windGustData}
+                width={hours * 4}
+                color={SEMANTIC_COLORS.alert.warning}
+              />
             </Box>
             <Box gap={1} marginTop={0}>
               <Text dimColor>Max:</Text>
-              <Text color="magenta">
+              <Text color={SEMANTIC_COLORS.alert.warning}>
                 {Math.round(Math.max(...windGustData))} km/h
               </Text>
             </Box>

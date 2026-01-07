@@ -6,7 +6,7 @@ import { getConditionEmoji, getTempColor } from '../utils/terminal.js';
 import { Sparkline } from './visualizations/Sparkline.js';
 import { TemperatureRangeBar } from './visualizations/TemperatureRangeBar.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
-import { BORDER_HEAVY } from '../utils/theme.js';
+import { BORDER_HEAVY, SEMANTIC_COLORS } from '../utils/theme.js';
 
 interface ForecastProps {
   data: WeatherData | null;
@@ -43,11 +43,19 @@ export function Forecast({ data, loading }: ForecastProps) {
       <Box marginBottom={1} gap={2}>
         <Box>
           <Text dimColor>[h]</Text>
-          <Text color={view === 'hourly' ? 'cyan' : undefined}> Hourly</Text>
+          <Text
+            color={view === 'hourly' ? SEMANTIC_COLORS.alert.info : undefined}
+          >
+            {' '}Hourly
+          </Text>
         </Box>
         <Box>
           <Text dimColor>[w]</Text>
-          <Text color={view === 'daily' ? 'cyan' : undefined}> Weekly</Text>
+          <Text
+            color={view === 'daily' ? SEMANTIC_COLORS.alert.info : undefined}
+          >
+            {' '}Weekly
+          </Text>
         </Box>
       </Box>
 
@@ -101,10 +109,21 @@ function DailyForecast({ data }: { data: WeatherData }) {
   const showSparklines = breakpoint !== 'tiny' && breakpoint !== 'small';
 
   return (
-    <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={2} paddingY={0}>
+    <Box
+      flexDirection="column"
+      borderStyle="round"
+      borderColor={SEMANTIC_COLORS.temperature.neutral}
+      paddingX={2}
+      paddingY={0}
+    >
       {/* Title */}
-      <Box marginBottom={0}>
-        <Text bold color="cyan">
+      <Box
+        marginBottom={0}
+        paddingX={1}
+        width="100%"
+        backgroundColor={SEMANTIC_COLORS.band.background}
+      >
+        <Text bold color={SEMANTIC_COLORS.band.text}>
           {BORDER_HEAVY.horizontal.repeat(2)} 7-DAY FORECAST{' '}
           {BORDER_HEAVY.horizontal.repeat(2)}
         </Text>
@@ -132,18 +151,22 @@ function DailyForecast({ data }: { data: WeatherData }) {
                 </Box>
                 <Text>{emoji}</Text>
                 <Box gap={1}>
-                  <Text color="red">{high}</Text>
+                  <Text color={SEMANTIC_COLORS.temperature.warm}>{high}</Text>
                   <Text dimColor>/</Text>
-                  <Text color="cyan">{low}</Text>
+                  <Text color={SEMANTIC_COLORS.temperature.cold}>{low}</Text>
                 </Box>
                 <Box gap={1}>
                   <Text dimColor>Rain:</Text>
-                  <Text color="blue">{day.precipitationProbability}%</Text>
+                  <Text color={SEMANTIC_COLORS.alert.info}>
+                    {day.precipitationProbability}%
+                  </Text>
                 </Box>
                 {day.uvIndexMax && day.uvIndexMax > 0 && (
                   <Box gap={1}>
                     <Text dimColor>UV:</Text>
-                    <Text color="yellow">{day.uvIndexMax}</Text>
+                    <Text color={SEMANTIC_COLORS.alert.warning}>
+                      {day.uvIndexMax}
+                    </Text>
                   </Box>
                 )}
                 {day.windSpeedMax && (
@@ -170,7 +193,7 @@ function DailyForecast({ data }: { data: WeatherData }) {
       {showSparklines && (
         <Box flexDirection="column" marginTop={2} borderTop borderColor="gray">
           <Box marginTop={1}>
-            <Text bold color="yellow">Weekly Trends</Text>
+            <Text bold color={SEMANTIC_COLORS.alert.warning}>Weekly Trends</Text>
           </Box>
 
           {/* Temperature trends */}
@@ -179,9 +202,15 @@ function DailyForecast({ data }: { data: WeatherData }) {
               <Box width={12}>
                 <Text dimColor>High Temps</Text>
               </Box>
-              <Sparkline data={highTemps} width={28} color="red" />
+              <Sparkline
+                data={highTemps}
+                width={28}
+                color={SEMANTIC_COLORS.temperature.warm}
+              />
               <Box gap={1}>
-                <Text color="red">{Math.round(Math.max(...highTemps))}°</Text>
+                <Text color={SEMANTIC_COLORS.temperature.warm}>
+                  {Math.round(Math.max(...highTemps))}°
+                </Text>
                 <Text dimColor>max</Text>
               </Box>
             </Box>
@@ -190,9 +219,15 @@ function DailyForecast({ data }: { data: WeatherData }) {
               <Box width={12}>
                 <Text dimColor>Low Temps</Text>
               </Box>
-              <Sparkline data={lowTemps} width={28} color="cyan" />
+              <Sparkline
+                data={lowTemps}
+                width={28}
+                color={SEMANTIC_COLORS.temperature.cold}
+              />
               <Box gap={1}>
-                <Text color="cyan">{Math.round(Math.min(...lowTemps))}°</Text>
+                <Text color={SEMANTIC_COLORS.temperature.cold}>
+                  {Math.round(Math.min(...lowTemps))}°
+                </Text>
                 <Text dimColor>min</Text>
               </Box>
             </Box>
@@ -204,9 +239,15 @@ function DailyForecast({ data }: { data: WeatherData }) {
               <Box width={12}>
                 <Text dimColor>Rain Chance</Text>
               </Box>
-              <Sparkline data={precipProbs} width={28} color="blue" />
+              <Sparkline
+                data={precipProbs}
+                width={28}
+                color={SEMANTIC_COLORS.alert.info}
+              />
               <Box gap={1}>
-                <Text color="blue">{Math.round(Math.max(...precipProbs))}%</Text>
+                <Text color={SEMANTIC_COLORS.alert.info}>
+                  {Math.round(Math.max(...precipProbs))}%
+                </Text>
                 <Text dimColor>max</Text>
               </Box>
             </Box>
@@ -219,9 +260,15 @@ function DailyForecast({ data }: { data: WeatherData }) {
                 <Box width={12}>
                   <Text dimColor>UV Index</Text>
                 </Box>
-                <Sparkline data={uvIndexes} width={28} color="magenta" />
+                <Sparkline
+                  data={uvIndexes}
+                  width={28}
+                  color={SEMANTIC_COLORS.alert.warning}
+                />
                 <Box gap={1}>
-                  <Text color="magenta">{Math.round(Math.max(...uvIndexes))}</Text>
+                  <Text color={SEMANTIC_COLORS.alert.warning}>
+                    {Math.round(Math.max(...uvIndexes))}
+                  </Text>
                   <Text dimColor>max</Text>
                 </Box>
               </Box>

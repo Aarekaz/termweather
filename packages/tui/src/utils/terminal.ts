@@ -1,3 +1,5 @@
+import { SEMANTIC_COLORS, getTemperatureColor } from './theme.js';
+
 export function getConditionEmoji(condition: string): string {
   const emojis: Record<string, string> = {
     clear: '\u2600\uFE0F',
@@ -13,27 +15,23 @@ export function getConditionEmoji(condition: string): string {
 }
 
 export function getUVColor(uvIndex: number): string {
-  if (uvIndex <= 2) return 'green';
-  if (uvIndex <= 5) return 'yellow';
-  if (uvIndex <= 7) return 'magenta';
-  if (uvIndex <= 10) return 'red';
-  return 'redBright';
+  if (uvIndex <= 2) return SEMANTIC_COLORS.alert.info;
+  if (uvIndex <= 5) return SEMANTIC_COLORS.alert.warning;
+  if (uvIndex <= 7) return SEMANTIC_COLORS.alert.warning;
+  if (uvIndex <= 10) return SEMANTIC_COLORS.alert.danger;
+  return SEMANTIC_COLORS.alert.severe;
 }
 
 export function getAQIColor(aqi: number): string {
-  if (aqi <= 50) return 'green';
-  if (aqi <= 100) return 'yellow';
-  if (aqi <= 150) return 'magenta';
-  if (aqi <= 200) return 'red';
-  return 'redBright';
+  if (aqi <= 50) return SEMANTIC_COLORS.alert.info;
+  if (aqi <= 100) return SEMANTIC_COLORS.alert.warning;
+  if (aqi <= 150) return SEMANTIC_COLORS.alert.warning;
+  if (aqi <= 200) return SEMANTIC_COLORS.alert.danger;
+  return SEMANTIC_COLORS.alert.severe;
 }
 
 export function getTempColor(temp: number): string {
-  if (temp <= 0) return 'cyan';
-  if (temp <= 10) return 'blue';
-  if (temp <= 20) return 'green';
-  if (temp <= 30) return 'yellow';
-  return 'red';
+  return getTemperatureColor(temp);
 }
 
 export function formatTimeAgo(date: Date): string {

@@ -45,6 +45,26 @@ export const THEME = {
   value: 'whiteBright',
 } as const;
 
+// Semantic colors for consistent UI meaning (small palette)
+export const SEMANTIC_COLORS = {
+  temperature: {
+    cold: 'blueBright',
+    neutral: 'white',
+    warm: 'yellow',
+    hot: 'red',
+  },
+  alert: {
+    info: 'cyan',
+    warning: 'yellow',
+    danger: 'red',
+    severe: 'redBright',
+  },
+  band: {
+    background: 'blackBright',
+    text: 'white',
+  },
+} as const;
+
 // Heavy industrial borders for main panels
 export const BORDER_HEAVY = {
   topLeft: '┏',
@@ -106,13 +126,10 @@ export function createBorder(
  * Get color for temperature value
  */
 export function getTemperatureColor(temp: number): string {
-  if (temp < 0) return THEME.temp.freezing;
-  if (temp < 10) return THEME.temp.cold;
-  if (temp < 20) return THEME.temp.cool;
-  if (temp < 25) return THEME.temp.mild;
-  if (temp < 30) return THEME.temp.warm;
-  if (temp < 35) return THEME.temp.hot;
-  return THEME.temp.extreme;
+  if (temp < 8) return SEMANTIC_COLORS.temperature.cold;
+  if (temp < 22) return SEMANTIC_COLORS.temperature.neutral;
+  if (temp < 30) return SEMANTIC_COLORS.temperature.warm;
+  return SEMANTIC_COLORS.temperature.hot;
 }
 
 /**
