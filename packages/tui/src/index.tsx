@@ -8,6 +8,7 @@ import { HelpModal } from './components/overlays/HelpModal.js';
 import { OnboardingModal } from './components/overlays/OnboardingModal.js';
 import { TabBar } from './components/navigation/TabBar.js';
 import { TinyScreenWarning } from './components/TinyScreenWarning.js';
+import { SplashScreen } from './components/SplashScreen.js';
 import { useWeatherData } from './hooks/useWeatherData.js';
 import { useTerminalSize } from './hooks/useTerminalSize.js';
 import { getNextTab, getPreviousTab, getTabByNumber } from './config/tabs.js';
@@ -37,6 +38,7 @@ function App() {
   const [showHelp, setShowHelp] = useState(false);
   const [isFirstRun, setIsFirstRun] = useState<boolean | null>(null);
   const [configLoaded, setConfigLoaded] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   const { breakpoint } = useTerminalSize();
   const currentLocation = locations[currentLocationIndex];
@@ -76,6 +78,11 @@ function App() {
     initializeConfig();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Auto-save locations and settings when they change
   useEffect(() => {
     if (!configLoaded) return;
@@ -96,6 +103,11 @@ function App() {
 
   // Handle keyboard input
   useInput((input, key) => {
+    if (showSplash) {
+      setShowSplash(false);
+      return;
+    }
+
     // Help modal toggle (works in all views)
     if (input === '?') {
       setShowHelp((prev) => !prev);
@@ -251,6 +263,11 @@ function App() {
 
     setView('dashboard');
   };
+
+  // Show onboarding on first run
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   // Show onboarding on first run
   if (isFirstRun) {
