@@ -62,9 +62,6 @@ export function UnifiedHeader(props: UnifiedHeaderProps) {
           </Text>
         </Box>
 
-        <Text dimColor>
-          [{props.locationIndex + 1}/{props.totalLocations}]
-        </Text>
       </Box>
     </Box>
   );

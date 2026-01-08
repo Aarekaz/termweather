@@ -301,7 +301,13 @@ function App() {
   return (
     <Box flexDirection="column" width="100%">
       {/* Tab Navigation Bar */}
-      <TabBar currentView={view} onTabChange={setView} breakpoint={breakpoint} />
+      <TabBar
+        currentView={view}
+        onTabChange={setView}
+        breakpoint={breakpoint}
+        locationIndex={currentLocationIndex}
+        totalLocations={locations.length}
+      />
 
       {/* Main Content - Dashboard now includes header */}
       <Box flexGrow={1} minHeight={20}>
