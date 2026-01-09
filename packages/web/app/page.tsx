@@ -18,9 +18,11 @@ import { adaptWeatherData } from "@/lib/weather-adapter"
 import { formatRelativeTime } from "@weather/core"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
+import { useEffect, useState } from "react"
 
 function MobileHomeContent() {
   const { currentLocation, getWeatherForLocation, loading } = useWeatherContext()
+  const [copied, setCopied] = useState(false)
 
   // Get weather data for current location
   const weatherData = currentLocation ? getWeatherForLocation(currentLocation.id) : null
@@ -40,6 +42,21 @@ function MobileHomeContent() {
         <p>No weather data available</p>
       </div>
     )
+  }
+
+  useEffect(() => {
+    if (!copied) return
+    const timer = setTimeout(() => setCopied(false), 1500)
+    return () => clearTimeout(timer)
+  }, [copied])
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText("npm i -g termweather")
+      setCopied(true)
+    } catch {
+      setCopied(false)
+    }
   }
 
   const { location: currentLocationData, hourly: hourlyData, daily: weeklyData } = adapted
@@ -75,6 +92,20 @@ function MobileHomeContent() {
               CHANGE
             </Button>
           </Link>
+        </div>
+        <div className="mt-2 flex items-center gap-2">
+          <div className="text-[9px] font-bold text-gray-500 tracking-wider">CLI</div>
+          <code className="font-mono text-[10px] text-gray-900">
+            npm i -g termweather
+          </code>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopy}
+            className="text-[9px] font-bold px-2 h-6 bg-transparent hover:bg-gray-100"
+          >
+            {copied ? "COPIED" : "COPY"}
+          </Button>
         </div>
       </div>
 
@@ -151,10 +182,26 @@ function MobileHomeContent() {
 function DesktopDashboard() {
   const { currentLocation, getWeatherForLocation, loading } = useWeatherContext()
   const weatherData = currentLocation ? getWeatherForLocation(currentLocation.id) : null
+  const [copied, setCopied] = useState(false)
 
   const lastUpdated = weatherData
     ? formatRelativeTime(weatherData.lastUpdated)
     : "Loading..."
+
+  useEffect(() => {
+    if (!copied) return
+    const timer = setTimeout(() => setCopied(false), 1500)
+    return () => clearTimeout(timer)
+  }, [copied])
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText("npm i -g termweather")
+      setCopied(true)
+    } catch {
+      setCopied(false)
+    }
+  }
 
   return (
     <div className="hidden lg:block relative p-6">
@@ -172,6 +219,20 @@ function DesktopDashboard() {
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                 {lastUpdated}
               </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-md border border-gray-700/70 bg-black/30 px-3 py-2">
+              <div className="text-[10px] font-bold text-gray-400 tracking-wider">CLI</div>
+              <code className="font-mono text-xs text-white">
+                npm i -g termweather
+              </code>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                className="h-7 px-2 text-[10px] font-bold bg-transparent text-white border-gray-600 hover:bg-white/5"
+              >
+                {copied ? "COPIED" : "COPY"}
+              </Button>
             </div>
           </div>
         </div>
