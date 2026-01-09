@@ -40,7 +40,8 @@ export function QuickMetricsBar({
       borderStyle="single"
       borderColor="gray"
       paddingX={2}
-      justifyContent="space-between"
+      paddingY={0}
+      gap={3}
     >
       {/* Wind */}
       <Box gap={1}>

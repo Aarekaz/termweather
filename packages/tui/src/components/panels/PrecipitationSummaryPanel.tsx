@@ -5,7 +5,7 @@ import {
   calculatePrecipitationAccumulation,
   calculateWeeklyPrecipitation,
 } from '@weather/core';
-import { BORDER_HEAVY } from '../../utils/theme.js';
+import { BORDER_HEAVY, SEMANTIC_COLORS } from '../../utils/theme.js';
 import { getPrecipTypeEmoji } from '../../utils/atmosphere.js';
 
 interface PrecipitationSummaryPanelProps {
@@ -31,14 +31,19 @@ export function PrecipitationSummaryPanel({
     <Box
       flexDirection="column"
       borderStyle="round"
-      borderColor="cyan"
+      borderColor={SEMANTIC_COLORS.alert.info}
       paddingX={2}
       paddingY={1}
       width={40}
     >
       {/* Title */}
-      <Box marginBottom={1}>
-        <Text bold color="cyan">
+      <Box
+        marginBottom={1}
+        paddingX={1}
+        width="100%"
+        backgroundColor={SEMANTIC_COLORS.band.background}
+      >
+        <Text bold color={SEMANTIC_COLORS.band.text}>
           {BORDER_HEAVY.horizontal.repeat(2)} Precipitation{' '}
           {BORDER_HEAVY.horizontal.repeat(2)}
         </Text>
@@ -51,7 +56,9 @@ export function PrecipitationSummaryPanel({
           <Text> {getPrecipTypeEmoji(daily24h.type)}</Text>
         </Box>
         <Box>
-          <Text color="cyan">{daily24h.total.toFixed(1)} mm total</Text>
+          <Text color={SEMANTIC_COLORS.alert.info}>
+            {daily24h.total.toFixed(1)} mm total
+          </Text>
         </Box>
         {daily24h.type === 'mixed' && (
           <Box gap={2}>
@@ -67,7 +74,9 @@ export function PrecipitationSummaryPanel({
           <Text bold>Next 7 Days:</Text>
         </Box>
         <Box>
-          <Text color="cyan">{weekly.total.toFixed(1)} mm total</Text>
+          <Text color={SEMANTIC_COLORS.alert.info}>
+            {weekly.total.toFixed(1)} mm total
+          </Text>
         </Box>
         <Text dimColor>
           Avg: {weekly.average.toFixed(1)} mm/day

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import type { SunTimes } from '@weather/core';
 import { calculateDaylightDuration } from '@weather/core';
-import { BORDER_HEAVY } from '../../utils/theme.js';
+import { BORDER_HEAVY, SEMANTIC_COLORS } from '../../utils/theme.js';
 import { SunArc } from '../visualizations/SunArc.js';
 import { MoonPhaseCompact } from '../visualizations/MoonPhase.js';
 
@@ -27,14 +27,19 @@ export function AstronomyPanel({ sunTimes, currentTime }: AstronomyPanelProps) {
     <Box
       flexDirection="column"
       borderStyle="round"
-      borderColor="cyan"
+      borderColor={SEMANTIC_COLORS.temperature.neutral}
       paddingX={2}
       paddingY={1}
       width={35}
     >
       {/* Title */}
-      <Box marginBottom={1}>
-        <Text bold color="cyan">
+      <Box
+        marginBottom={1}
+        paddingX={1}
+        width="100%"
+        backgroundColor={SEMANTIC_COLORS.band.background}
+      >
+        <Text bold color={SEMANTIC_COLORS.band.text}>
           {BORDER_HEAVY.horizontal.repeat(2)} Astronomy{' '}
           {BORDER_HEAVY.horizontal.repeat(2)}
         </Text>

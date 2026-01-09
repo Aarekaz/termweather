@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import type { HourlyForecast } from '@weather/core';
 import { findNextPrecipitation, formatPrecipitationAlert } from '@weather/core';
-import { BORDER_HEAVY } from '../../utils/theme.js';
+import { BORDER_HEAVY, SEMANTIC_COLORS } from '../../utils/theme.js';
 
 interface PrecipitationAlertPanelProps {
   /** Hourly forecast data */
@@ -26,18 +26,18 @@ export function PrecipitationAlertPanel({
   // Determine icon and color based on timing
   const getAlertStyle = () => {
     if (!nextPrecip) {
-      return { icon: '☀️', color: 'green' as const };
+      return { icon: '☀️', color: SEMANTIC_COLORS.temperature.neutral };
     }
     if (nextPrecip.hoursUntil === 0) {
-      return { icon: '🌧', color: 'yellow' as const };
+      return { icon: '🌧', color: SEMANTIC_COLORS.alert.warning };
     }
     if (nextPrecip.hoursUntil < 3) {
-      return { icon: '⚠️', color: 'yellow' as const };
+      return { icon: '⚠️', color: SEMANTIC_COLORS.alert.warning };
     }
     if (nextPrecip.hoursUntil < 12) {
-      return { icon: '☁️', color: 'cyan' as const };
+      return { icon: '☁️', color: SEMANTIC_COLORS.alert.info };
     }
-    return { icon: '🌤', color: 'blue' as const };
+    return { icon: '🌤', color: SEMANTIC_COLORS.temperature.cold };
   };
 
   const { icon, color } = getAlertStyle();
@@ -46,14 +46,19 @@ export function PrecipitationAlertPanel({
     <Box
       flexDirection="column"
       borderStyle="round"
-      borderColor="cyan"
+      borderColor={SEMANTIC_COLORS.alert.info}
       paddingX={2}
       paddingY={1}
       width={40}
     >
       {/* Title */}
-      <Box marginBottom={1}>
-        <Text bold color="cyan">
+      <Box
+        marginBottom={1}
+        paddingX={1}
+        width="100%"
+        backgroundColor={SEMANTIC_COLORS.band.background}
+      >
+        <Text bold color={SEMANTIC_COLORS.band.text}>
           {BORDER_HEAVY.horizontal.repeat(2)} Next Precipitation{' '}
           {BORDER_HEAVY.horizontal.repeat(2)}
         </Text>

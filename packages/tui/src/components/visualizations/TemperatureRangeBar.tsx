@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import { SYMBOLS } from '../../utils/symbols.js';
+import { getTemperatureColor, SEMANTIC_COLORS } from '../../utils/theme.js';
 
 interface TemperatureRangeBarProps {
   /** Minimum temperature */
@@ -46,44 +47,48 @@ export function TemperatureRangeBar({
     ? Math.floor(currentPos * width)
     : undefined;
 
-  // Build the bar
+  // Build the bar with per-segment temperature colors
   const chars: string[] = Array(width).fill(SYMBOLS.progress[0]); // ░ empty
+  const colors: string[] = Array(width).fill(SEMANTIC_COLORS.temperature.neutral);
 
-  // Fill range with gradient
   for (let i = minChar; i <= maxChar; i++) {
     if (i >= 0 && i < width) {
-      // Use color gradient: cooler → warmer
-      const rangePos = (i - minChar) / (maxChar - minChar || 1);
-      if (rangePos < 0.33) {
-        chars[i] = SYMBOLS.progress[1]; // ▒ cool
-      } else if (rangePos < 0.66) {
-        chars[i] = SYMBOLS.progress[2]; // ▓ medium
-      } else {
-        chars[i] = SYMBOLS.progress[3]; // █ warm
-      }
+      chars[i] = SYMBOLS.progress[3]; // █ filled range
+      const tempAt = scaleMin + (i / Math.max(1, width - 1)) * scale;
+      colors[i] = getTemperatureColor(tempAt);
     }
   }
 
-  // Add current temperature marker
   if (currentChar !== undefined && currentChar >= 0 && currentChar < width) {
-    chars[currentChar] = '●'; // Current temp marker
+    chars[currentChar] = '●';
+    colors[currentChar] = SEMANTIC_COLORS.temperature.hot;
   }
 
-  // Determine color based on temperature
-  const getColor = (temp: number): string => {
-    if (temp < 0) return 'blue';
-    if (temp < 10) return 'cyan';
-    if (temp < 20) return 'green';
-    if (temp < 30) return 'yellow';
-    return 'red';
-  };
-
-  const barColor = getColor((min + max) / 2);
+  const segments: { text: string; color: string }[] = [];
+  let currentText = '';
+  let currentColor = colors[0];
+  for (let i = 0; i < width; i++) {
+    if (colors[i] !== currentColor) {
+      segments.push({ text: currentText, color: currentColor });
+      currentText = '';
+      currentColor = colors[i];
+    }
+    currentText += chars[i];
+  }
+  if (currentText) {
+    segments.push({ text: currentText, color: currentColor });
+  }
 
   return (
     <Box gap={1}>
       <Text dimColor>{min}°</Text>
-      <Text color={barColor}>{chars.join('')}</Text>
+      <Box>
+        {segments.map((segment, index) => (
+          <Text key={index} color={segment.color}>
+            {segment.text}
+          </Text>
+        ))}
+      </Box>
       <Text dimColor>{max}°</Text>
     </Box>
   );

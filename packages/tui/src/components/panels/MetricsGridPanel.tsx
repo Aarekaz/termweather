@@ -7,7 +7,7 @@ import {
   formatPressure,
 } from '@weather/core';
 import { getUVColor, getAQIColor } from '../../utils/terminal.js';
-import { BORDER_HEAVY } from '../../utils/theme.js';
+import { BORDER_HEAVY, SEMANTIC_COLORS } from '../../utils/theme.js';
 import { ProgressBar, getThresholdColor } from '../visualizations/ProgressBar.js';
 import { WindIndicator } from '../visualizations/CompassRose.js';
 import { PressureGauge } from '../visualizations/PressureGauge.js';
@@ -58,33 +58,38 @@ export function MetricsGridPanel({
   // UV Index color thresholds
   const uvColorFn = (percent: number) =>
     getThresholdColor(percent, [
-      { value: 20, color: 'green' },
-      { value: 50, color: 'yellow' },
-      { value: 70, color: 'magenta' },
-      { value: 100, color: 'red' },
+      { value: 20, color: SEMANTIC_COLORS.alert.info },
+      { value: 50, color: SEMANTIC_COLORS.alert.warning },
+      { value: 70, color: SEMANTIC_COLORS.alert.warning },
+      { value: 100, color: SEMANTIC_COLORS.alert.danger },
     ]);
 
   // AQI color thresholds
   const aqiColorFn = (percent: number) =>
     getThresholdColor(percent, [
-      { value: 25, color: 'green' },
-      { value: 50, color: 'yellow' },
-      { value: 75, color: 'magenta' },
-      { value: 100, color: 'red' },
+      { value: 25, color: SEMANTIC_COLORS.alert.info },
+      { value: 50, color: SEMANTIC_COLORS.alert.warning },
+      { value: 75, color: SEMANTIC_COLORS.alert.warning },
+      { value: 100, color: SEMANTIC_COLORS.alert.danger },
     ]);
 
   return (
     <Box
       flexDirection="column"
       borderStyle="round"
-      borderColor="cyan"
+      borderColor={SEMANTIC_COLORS.temperature.neutral}
       paddingX={2}
       paddingY={1}
       width={45}
     >
       {/* Title */}
-      <Box marginBottom={1}>
-        <Text bold color="cyan">
+      <Box
+        marginBottom={1}
+        paddingX={1}
+        width="100%"
+        backgroundColor={SEMANTIC_COLORS.band.background}
+      >
+        <Text bold color={SEMANTIC_COLORS.band.text}>
           {BORDER_HEAVY.horizontal.repeat(2)} Metrics{' '}
           {BORDER_HEAVY.horizontal.repeat(2)}
         </Text>
@@ -98,7 +103,7 @@ export function MetricsGridPanel({
             max={100}
             width={10}
             showValue
-            color="cyan"
+            color={SEMANTIC_COLORS.alert.info}
           />
         </MetricBox>
 

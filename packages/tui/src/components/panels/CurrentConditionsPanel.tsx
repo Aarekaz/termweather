@@ -3,7 +3,7 @@ import { Box, Text } from 'ink';
 import type { WeatherData } from '@weather/core';
 import { formatTemperature, getConditionDisplay } from '@weather/core';
 import { getConditionEmoji, getTempColor } from '../../utils/terminal.js';
-import { BORDER_HEAVY } from '../../utils/theme.js';
+import { BORDER_HEAVY, SEMANTIC_COLORS } from '../../utils/theme.js';
 import { Sparkline } from '../visualizations/Sparkline.js';
 import { WeatherEffect } from '../animations/WeatherEffect.js';
 
@@ -38,15 +38,20 @@ export function CurrentConditionsPanel({
     <Box
       flexDirection="column"
       borderStyle="round"
-      borderColor="cyan"
+      borderColor={SEMANTIC_COLORS.temperature.neutral}
       paddingX={2}
       paddingY={1}
       width={panelWidth}
       height={panelHeight}
     >
       {/* Title */}
-      <Box marginBottom={1}>
-        <Text bold color="cyan">
+      <Box
+        marginBottom={1}
+        paddingX={1}
+        width="100%"
+        backgroundColor={SEMANTIC_COLORS.band.background}
+      >
+        <Text bold color={SEMANTIC_COLORS.band.text}>
           {BORDER_HEAVY.horizontal.repeat(2)} Current Conditions{' '}
           {BORDER_HEAVY.horizontal.repeat(2)}
         </Text>

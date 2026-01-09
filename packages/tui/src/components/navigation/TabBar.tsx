@@ -12,13 +12,22 @@ export interface TabBarProps {
   onTabChange: (view: View) => void;
   /** Terminal size breakpoint for responsive display */
   breakpoint: Breakpoint;
+  /** Current location index for header hint */
+  locationIndex?: number;
+  /** Total saved locations for header hint */
+  totalLocations?: number;
 }
 
 /**
  * Tab navigation bar component
  * Displays horizontal tabs with active tab highlighted and keyboard hints
  */
-export function TabBar({ currentView, breakpoint }: TabBarProps) {
+export function TabBar({
+  currentView,
+  breakpoint,
+  locationIndex,
+  totalLocations,
+}: TabBarProps) {
   // Don't show tab bar on tiny screens
   if (breakpoint === 'tiny') {
     return null;
@@ -59,8 +68,16 @@ export function TabBar({ currentView, breakpoint }: TabBarProps) {
       })}
 
       {/* Navigation hint */}
-      <Box marginLeft={2}>
+      <Box marginLeft={2} gap={1}>
         <Text dimColor>Tab to cycle</Text>
+        {locationIndex != null && totalLocations != null && (
+          <>
+            <Text dimColor>•</Text>
+            <Text dimColor>
+              [{locationIndex + 1}/{totalLocations}]
+            </Text>
+          </>
+        )}
       </Box>
     </Box>
   );
